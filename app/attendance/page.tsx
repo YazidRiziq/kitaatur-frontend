@@ -98,10 +98,22 @@ export default function AttendancePage() {
   useEffect(() => {
     if (!baseUrl) return;
     const controller = new AbortController();
+    
     fetch(`${baseUrl}/departments`, { signal: controller.signal })
       .then((res) => res.json())
-      .then((data: Department[]) => setDepartments(data))
-      .catch(() => {});
+      .then((response) => {
+        if (response && response.data) {
+           setDepartments(response.data);
+        } else if (Array.isArray(response)) {
+           setDepartments(response);
+        } else {
+           setDepartments([]); 
+        }
+      })
+      .catch(() => {
+        setDepartments([]);
+      });
+      
     return () => controller.abort();
   }, [baseUrl]);
 
@@ -112,8 +124,19 @@ export default function AttendancePage() {
   const fetchStats = useCallback(() => {
     if (!baseUrl) return;
     setLoadingStats(true);
+
+    const companyId = "fb3661a4-73fb-4c68-96ba-3c998107f2d9";
+
+    const params = new URLSearchParams();
+    params.set("company_id", companyId);
+    params.set("date", date);
+    
+    if (departmentId) {
+      params.set("department_id", departmentId);
+    }
+
     const controller = new AbortController();
-    fetch(`${baseUrl}/attendances/stats?date=${date}`, {
+    fetch(`${baseUrl}/attendances/stats?${params.toString()}`, {
       signal: controller.signal,
     })
       .then((res) => res.json())
@@ -121,7 +144,7 @@ export default function AttendancePage() {
       .catch(() => setStats(null))
       .finally(() => setLoadingStats(false));
     return () => controller.abort();
-  }, [baseUrl, date]);
+  }, [baseUrl, date, departmentId]);
 
   // Panggil fungsi fetchStats setiap kali tanggal berubah, biar statistiknya selalu update
   useEffect(() => {

@@ -21,6 +21,7 @@ export default function RootLayout({
     <html lang="en">
       {/* flex dan min-h-screen akan membuat sidebar dan konten bersebelahan penuh 1 layar */}
       <body
+        suppressHydrationWarning
         className={`flex min-h-screen  bg-surface font-body text-on-surface overflow-x-hidden antialiased ${plusJakarta.variable} ${inter.variable}`}
       >
         {/* Ini Bingkai Kiri (Tetap) */}
