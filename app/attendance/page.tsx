@@ -39,9 +39,11 @@ function getToday(): string {
   return formatDateToYYYYMMDD(new Date());
 }
 
+// Pintu Masuk Utama halaman absensi KitaAtur.com, Mulai dari sini ke bawah adalah isi dari halamannya.
 export default function AttendancePage() {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
+  // State untuk menyimpan nilai filter dan pencarian yang dipilih user
   const [date, setDate] = useState<string>(getToday());
   const [search, setSearch] = useState<string>("");
   const [debouncedSearch, setDebouncedSearch] = useState<string>("");
@@ -61,8 +63,17 @@ export default function AttendancePage() {
   const [exporting, setExporting] = useState<boolean>(false);
   const [exportError, setExportError] = useState<string | null>(null);
 
+  /*
+    Ref untuk menyimpan timer debounce, biar bisa dibersihin kalo user terus ngetik
+    Sangat berguna buat ngatur jeda waktu pencarian nanti
+  */
   const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  /*
+    Debounce search input, kode ini menahan pencarian selama 300 milidetik.
+    Jadi sistem akan nunggu sampai kamu berhenti ngetik sejenak, baru deh teksnya disimpan
+    ke laci debouncedSearch buat dikirim ke server.
+  */
   useEffect(() => {
     if (searchTimerRef.current) {
       clearTimeout(searchTimerRef.current);
@@ -77,6 +88,13 @@ export default function AttendancePage() {
     };
   }, [search]);
 
+  /*
+    Ini adalah robot otomatis (useEffect) yang cuma jalan satu kali saat halaman
+    pertama kali dibuka. Tugasnya nelpon server (fetch) ke alamat /departments buat
+    minta daftar divisi (misal: HR, IT, Finance). Kalau datanya udah dapet, dimasukin
+    ke laci setDepartments. AbortController di sini fungsinya seperti "tombol batal" 
+    misal tiba-tiba internet putus.
+  */
   useEffect(() => {
     if (!baseUrl) return;
     const controller = new AbortController();
@@ -87,6 +105,10 @@ export default function AttendancePage() {
     return () => controller.abort();
   }, [baseUrl]);
 
+  /*
+    Fungsi ini buat ngambil data statistik absensi berdasarkan tanggal yang dipilih.
+    Mirip kayak yang di atas, tapi ini bisa dipanggil ulang setiap kali tanggalnya berubah.
+  */
   const fetchStats = useCallback(() => {
     if (!baseUrl) return;
     setLoadingStats(true);
@@ -101,11 +123,16 @@ export default function AttendancePage() {
     return () => controller.abort();
   }, [baseUrl, date]);
 
+  // Panggil fungsi fetchStats setiap kali tanggal berubah, biar statistiknya selalu update
   useEffect(() => {
     const cleanup = fetchStats();
     return () => cleanup?.();
   }, [fetchStats]);
 
+  /*
+    Fungsi ini buat ngambil data absensi karyawan berdasarkan filter yang
+    dipilih (tanggal, pencarian, department, halaman)
+  */
   const fetchAttendances = useCallback(() => {
     if (!baseUrl) return;
     setLoadingTable(true);
@@ -137,15 +164,21 @@ export default function AttendancePage() {
     return () => controller.abort();
   }, [baseUrl, date, page, debouncedSearch, departmentId]);
 
+  /*
+    Panggil fungsi fetchAttendances setiap kali filter atau halaman berubah,
+    biar datanya selalu sesuai dengan pilihan user
+  */
   useEffect(() => {
     const cleanup = fetchAttendances();
     return () => cleanup?.();
   }, [fetchAttendances]);
 
+  // Reset halaman ke 1 setiap kali filter pencarian, department, atau tanggal berubah
   useEffect(() => {
     setPage(1);
   }, [debouncedSearch, departmentId, date]);
 
+  // Fungsi ini buat nge-handle proses export data absensi ke Excel
   const handleExport = async () => {
     if (!baseUrl) return;
     setExporting(true);
@@ -186,6 +219,7 @@ export default function AttendancePage() {
     }
   };
 
+  // Fungsi ini buat nge-handle saat user klik tombol "View Detail" di tabel absensi
   const handleViewDetail = (id: string) => {
     console.log("View detail for attendance:", id);
   };
@@ -273,6 +307,7 @@ export default function AttendancePage() {
             />
           </div>
           <div className="flex items-center gap-2">
+            {/* Dropdown untuk filter departemen */}
             <select
               className="bg-surface-container-low border-none rounded-2xl py-2.5 px-4 text-sm font-medium text-on-surface focus:ring-2 focus:ring-primary/20 cursor-pointer outline-none"
               value={departmentId}
@@ -285,6 +320,8 @@ export default function AttendancePage() {
                 </option>
               ))}
             </select>
+
+            {/* Input tanggal untuk filter absensi berdasarkan tanggal tertentu */}
             <input
               type="date"
               className="bg-surface-container-low border-none rounded-2xl py-2.5 px-4 text-sm font-medium text-on-surface focus:ring-2 focus:ring-primary/20 cursor-pointer outline-none"
