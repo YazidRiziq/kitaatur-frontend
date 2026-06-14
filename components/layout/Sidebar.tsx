@@ -10,14 +10,15 @@ import {
   MessageCircleQuestionMark,
   LogOut,
 } from "lucide-react";
+import { signOutAction } from "@/lib/auth/actions";
 
 export function Sidebar() {
   const pathname = usePathname();
 
   const navItems = [
-    { name: "Overview", href: "/", icon: Users },
+    { name: "Overview", href: "/overview", icon: LayoutDashboard },
     { name: "Data Absensi", href: "/attendance", icon: CalendarDays },
-    { name: "Pengajuan Cuti", href: "/leave", icon: LayoutDashboard },
+    { name: "Pengajuan Cuti", href: "/leave", icon: Users },
   ];
 
   return (
@@ -63,7 +64,7 @@ export function Sidebar() {
           icon={LogOut} 
           label="Sign Out" 
           variant="danger"
-          onClick={() => console.log("Sign Out Logic Triggered")} 
+          onClick={async () => { await signOutAction() }} 
         />
       </div>
     </aside>
