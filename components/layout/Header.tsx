@@ -9,7 +9,7 @@ interface HeaderProps {
   userAvatarUrl?: string
 }
 
-export function Header({ userName = "Pengguna", userRole = "Administrator", userAvatarUrl }: HeaderProps) {
+export function Header({ userName, userRole, userAvatarUrl }: HeaderProps) {
   return (
     <header className="fixed top-0 z-40 w-full h-15 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl flex items-center justify-end px-8 py-4 shadow-sm dark:shadow-none">
       <div className="ml-64" />

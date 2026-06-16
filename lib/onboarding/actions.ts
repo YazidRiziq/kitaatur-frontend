@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 import type { OnboardingData } from "@/lib/onboarding/types"
+import { setDashboardCookie } from "@/lib/dashboard/actions"
+import type { DashboardData } from "@/lib/dashboard/types"
 
 export async function completeOnboardingAction(data: OnboardingData) {
   const supabase = await createClient()
@@ -28,6 +30,7 @@ export async function completeOnboardingAction(data: OnboardingData) {
 
   const payload = {
     user_id: user.id,
+    full_name: user.user_metadata?.full_name || "Administrator",
     company_name: data.companyName,
     industry: data.industry || null,
     timezone: data.timezone,
@@ -51,6 +54,10 @@ export async function completeOnboardingAction(data: OnboardingData) {
     const body = await response.json().catch(() => null)
     throw new Error(body?.message || "Gagal menyelesaikan onboarding")
   }
+
+  const dashboardData: DashboardData = await response.json()
+  await setDashboardCookie(dashboardData)
+  await supabase.auth.refreshSession()
 
   revalidatePath("/", "layout")
   redirect("/overview")

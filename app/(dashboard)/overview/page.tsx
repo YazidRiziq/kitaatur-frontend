@@ -1,17 +1,17 @@
-import type { Metadata } from "next"
+"use client"
 
-export const metadata: Metadata = {
-  title: "Overview — KitaAtur HRIS",
-}
+import { useDashboard } from "@/lib/dashboard/dashboard-context"
 
 export default function OverviewPage() {
+  const { company } = useDashboard()
+
   return (
     <div className="p-8">
       <h1 className="font-headline text-3xl font-bold text-on-surface mb-2">
         Overview
       </h1>
       <p className="text-on-surface-variant mb-8">
-        Selamat datang di Dashboard KitaAtur. Pantau kehadiran dan pengajuan cuti karyawan Anda.
+        Selamat datang di {company.name}. Pantau kehadiran dan pengajuan cuti karyawan Anda.
       </p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

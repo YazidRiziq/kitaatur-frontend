@@ -15,6 +15,7 @@ import {
   type AttendanceRecord,
   type AttendancePagination,
 } from "@/components/attendance/AttendanceTable";
+import { useDashboard } from "@/lib/dashboard/dashboard-context";
 
 interface Department {
   id: string;
@@ -41,7 +42,9 @@ function getToday(): string {
 
 // Pintu Masuk Utama halaman absensi KitaAtur.com, Mulai dari sini ke bawah adalah isi dari halamannya.
 export default function AttendancePage() {
+  const { company } = useDashboard()
   const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+  const companyId = company.id;
 
   // State untuk menyimpan nilai filter dan pencarian yang dipilih user
   const [date, setDate] = useState<string>(getToday());
@@ -125,8 +128,6 @@ export default function AttendancePage() {
     if (!baseUrl) return;
     setLoadingStats(true);
 
-    const companyId = "fb3661a4-73fb-4c68-96ba-3c998107f2d9";
-
     const params = new URLSearchParams();
     params.set("company_id", companyId);
     params.set("date", date);
@@ -144,7 +145,7 @@ export default function AttendancePage() {
       .catch(() => setStats(null))
       .finally(() => setLoadingStats(false));
     return () => controller.abort();
-  }, [baseUrl, date, departmentId]);
+  }, [baseUrl, date, departmentId, companyId]);
 
   // Panggil fungsi fetchStats setiap kali tanggal berubah, biar statistiknya selalu update
   useEffect(() => {
