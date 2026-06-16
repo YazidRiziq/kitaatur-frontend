@@ -13,6 +13,14 @@ export async function completeOnboardingAction(data: OnboardingData) {
     throw new Error("Sesi tidak valid. Silakan login kembali.")
   }
 
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
+  const accessToken = session?.access_token
+  if (!accessToken) {
+    throw new Error("Token akses tidak tersedia. Silakan login kembali.")
+  }
+
   const baseUrl = process.env.NEXT_PUBLIC_API_URL
   if (!baseUrl) {
     throw new Error("API URL tidak dikonfigurasi")
@@ -32,7 +40,10 @@ export async function completeOnboardingAction(data: OnboardingData) {
 
   const response = await fetch(`${baseUrl}/onboarding`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { 
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${accessToken}`
+    },
     body: JSON.stringify(payload),
   })
 
