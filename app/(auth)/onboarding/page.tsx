@@ -1,29 +1,76 @@
-import type { Metadata } from "next"
-import { Building2 } from "lucide-react"
+"use client"
 
-export const metadata: Metadata = {
-  title: "Setup Perusahaan — KitaAtur HRIS",
+import { OnboardingProvider, useOnboarding } from "@/lib/onboarding/onboarding-context"
+import { ONBOARDING_STEPS } from "@/lib/onboarding/steps"
+import { OnboardingStepper } from "@/components/onboarding/OnboardingStepper"
+import { OnboardingNavigation } from "@/components/onboarding/OnboardingNavigation"
+import { completeOnboardingAction } from "@/lib/onboarding/actions"
+import { CompanyInfoStep } from "@/components/onboarding/steps/CompanyInfoStep"
+import { WorkScheduleStep } from "@/components/onboarding/steps/WorkScheduleStep"
+import { DepartmentsStep } from "@/components/onboarding/steps/DepartmentsStep"
+import { ConfirmationStep } from "@/components/onboarding/steps/ConfirmationStep"
+
+const STEP_COMPONENTS = [
+  CompanyInfoStep,
+  WorkScheduleStep,
+  DepartmentsStep,
+  ConfirmationStep,
+]
+
+function OnboardingFlow() {
+  const { state, dispatch } = useOnboarding()
+  const currentStep = ONBOARDING_STEPS[state.currentStep]
+  const isLastStep = state.currentStep === ONBOARDING_STEPS.length - 1
+  const StepComponent = STEP_COMPONENTS[state.currentStep]
+
+  const handleNext = () => {
+    const error = currentStep.validate(state.data)
+    if (error) {
+      dispatch({ type: "SET_ERROR", error })
+      return
+    }
+
+    if (isLastStep) {
+      dispatch({ type: "SET_SUBMITTING", isSubmitting: true })
+      completeOnboardingAction(state.data)
+        .catch((err) => {
+          dispatch({ type: "SET_ERROR", error: err.message || "Terjadi kesalahan. Silakan coba lagi." })
+          dispatch({ type: "SET_SUBMITTING", isSubmitting: false })
+        })
+    } else {
+      dispatch({ type: "NEXT_STEP" })
+    }
+  }
+
+  return (
+    <div className="w-full max-w-lg mx-auto">
+      <OnboardingStepper steps={ONBOARDING_STEPS} currentStep={state.currentStep} />
+
+      <div className="bg-surface-container-lowest rounded-3xl shadow-[0_12px_40px_rgba(0,105,72,0.08)] p-8">
+        <StepComponent
+          data={state.data}
+          updateField={(field, value) =>
+            dispatch({ type: "UPDATE_FIELD", field, value })
+          }
+          error={state.error}
+        />
+      </div>
+
+      <OnboardingNavigation
+        onBack={() => dispatch({ type: "PREV_STEP" })}
+        onNext={handleNext}
+        isFirstStep={state.currentStep === 0}
+        isLastStep={isLastStep}
+        isSubmitting={state.isSubmitting}
+      />
+    </div>
+  )
 }
 
 export default function OnboardingPage() {
   return (
-    <div className="w-full max-w-md mx-auto">
-      <div className="bg-surface-container-lowest rounded-3xl shadow-[0_12px_40px_rgba(0,105,72,0.08)] p-8 text-center">
-        <div className="w-14 h-14 rounded-2xl bg-emerald-50 flex items-center justify-center mx-auto mb-4">
-          <Building2 size={28} className="text-primary" />
-        </div>
-        <h2 className="font-headline text-xl font-bold text-on-surface mb-2">
-          Setup Perusahaan
-        </h2>
-        <p className="text-sm text-on-surface-variant mb-6">
-          Halaman onboarding untuk mendaftarkan perusahaan Anda akan segera hadir.
-          Fitur ini akan memungkinkan Anda untuk mengatur nama perusahaan, departemen,
-          dan jam kerja.
-        </p>
-        <div className="rounded-xl bg-amber-50 p-3 text-sm text-amber-700">
-          Anda belum menyelesaikan onboarding. Silakan kembali lagi nanti.
-        </div>
-      </div>
-    </div>
+    <OnboardingProvider>
+      <OnboardingFlow />
+    </OnboardingProvider>
   )
 }
