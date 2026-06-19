@@ -56,7 +56,6 @@ export async function inviteEmployee(
 }
 
 export async function getActiveEmployees(
-  companyId: string,
   filters: EmployeeFilters = {}
 ): Promise<PaginatedResponse<Employee>> {
   const token = await getAccessToken()
@@ -68,7 +67,7 @@ export async function getActiveEmployees(
   if (filters.page) params.set("page", String(filters.page))
 
   const queryString = params.toString()
-  const url = apiUrl(`/employees/company/${companyId}${queryString ? `?${queryString}` : ""}`)
+  const url = apiUrl(`/employees${queryString ? `?${queryString}` : ""}`)
 
   const response = await fetch(url, {
     headers: { Authorization: `Bearer ${token}` },
@@ -82,7 +81,6 @@ export async function getActiveEmployees(
 }
 
 export async function getPendingInvitations(
-  companyId: string,
   filters: EmployeeFilters = {}
 ): Promise<PaginatedResponse<PendingInvitation>> {
   const token = await getAccessToken()
@@ -94,7 +92,7 @@ export async function getPendingInvitations(
   if (filters.page) params.set("page", String(filters.page))
 
   const queryString = params.toString()
-  const url = apiUrl(`/employees/pending/${companyId}${queryString ? `?${queryString}` : ""}`)
+  const url = apiUrl(`/employees/pending${queryString ? `?${queryString}` : ""}`)
 
   const response = await fetch(url, {
     headers: { Authorization: `Bearer ${token}` },
@@ -148,13 +146,11 @@ export async function revokeInvitation(
   return response.json()
 }
 
-export async function getDepartments(
-  companyId: string
-): Promise<Department[]> {
+export async function getDepartments(): Promise<Department[]> {
   const token = await getAccessToken()
 
   const response = await fetch(
-    apiUrl(`/departments/company/${companyId}`),
+    apiUrl("/departments"),
     { headers: { Authorization: `Bearer ${token}` } }
   )
 
@@ -166,13 +162,11 @@ export async function getDepartments(
   return json?.data ?? json ?? []
 }
 
-export async function getPositions(
-  companyId: string
-): Promise<Position[]> {
+export async function getPositions(): Promise<Position[]> {
   const token = await getAccessToken()
 
   const response = await fetch(
-    apiUrl(`/positions/company/${companyId}`),
+    apiUrl("/positions"),
     { headers: { Authorization: `Bearer ${token}` } }
   )
 

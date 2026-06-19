@@ -20,14 +20,12 @@ interface InviteEmployeeSheetProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   onSuccess: () => void
-  companyId: string
 }
 
 export function InviteEmployeeSheet({
   open,
   onOpenChange,
   onSuccess,
-  companyId,
 }: InviteEmployeeSheetProps) {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
@@ -55,8 +53,8 @@ export function InviteEmployeeSheet({
 
     setLoadingDropdowns(true)
     Promise.all([
-      getDepartments(companyId),
-      getPositions(companyId),
+      getDepartments(),
+      getPositions(),
     ])
       .then(([depts, pos]) => {
         setDepartments(depts)
@@ -68,7 +66,7 @@ export function InviteEmployeeSheet({
         setPositions([])
       })
       .finally(() => setLoadingDropdowns(false))
-  }, [open, companyId])
+  }, [open])
 
   function validate(): boolean {
     const newErrors: Record<string, string> = {}

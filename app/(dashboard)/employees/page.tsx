@@ -3,7 +3,6 @@
 
 import { useState, useEffect, useRef, useCallback } from "react"
 import { UserPlus, Users, Clock } from "lucide-react"
-import { useDashboard } from "@/lib/dashboard/dashboard-context"
 import { getActiveEmployees, getPendingInvitations } from "@/lib/employees/actions"
 import type {
   Employee,
@@ -20,9 +19,7 @@ import { InviteEmployeeSheet } from "@/components/employees/InviteEmployeeSheet"
 type Tab = "active" | "pending"
 
 export default function EmployeesPage() {
-  const { company } = useDashboard()
   const baseUrl = process.env.NEXT_PUBLIC_API_URL
-  const companyId = company.id
 
   const [activeTab, setActiveTab] = useState<Tab>("active")
   const [sheetOpen, setSheetOpen] = useState(false)
@@ -105,10 +102,9 @@ export default function EmployeesPage() {
   }, [baseUrl])
 
   const fetchActiveEmployees = useCallback(() => {
-    if (!companyId) return
     setLoadingActive(true)
     let cancelled = false
-    getActiveEmployees(companyId, {
+    getActiveEmployees({
       search: debouncedSearch || undefined,
       department_id: departmentId || undefined,
       position_id: positionId || undefined,
@@ -131,13 +127,12 @@ export default function EmployeesPage() {
         if (!cancelled) setLoadingActive(false)
       })
     return () => { cancelled = true }
-  }, [companyId, debouncedSearch, departmentId, positionId, page])
+  }, [debouncedSearch, departmentId, positionId, page])
 
   const fetchPendingInvitations = useCallback(() => {
-    if (!companyId) return
     setLoadingPending(true)
     let cancelled = false
-    getPendingInvitations(companyId, {
+    getPendingInvitations({
       search: debouncedSearch || undefined,
       department_id: departmentId || undefined,
       position_id: positionId || undefined,
@@ -159,7 +154,7 @@ export default function EmployeesPage() {
         if (!cancelled) setLoadingPending(false)
       })
     return () => { cancelled = true }
-  }, [companyId, debouncedSearch, departmentId, positionId, page])
+  }, [debouncedSearch, departmentId, positionId, page])
 
   useEffect(() => {
     if (activeTab !== "active") return
@@ -272,7 +267,6 @@ export default function EmployeesPage() {
         open={sheetOpen}
         onOpenChange={setSheetOpen}
         onSuccess={handleSheetSuccess}
-        companyId={companyId}
       />
     </div>
   )
