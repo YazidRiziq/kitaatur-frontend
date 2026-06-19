@@ -8,9 +8,9 @@ import type {
   Employee,
   PendingInvitation,
   PaginatedResponse,
-  Department,
-  Position,
 } from "@/lib/employees/types"
+import type { Department } from "@/lib/departments/types"
+import type { Position } from "@/lib/positions/types"
 import { EmployeeFilterBar } from "@/components/employees/EmployeeFilterBar"
 import { EmployeeTable } from "@/components/employees/EmployeeTable"
 import { PendingInvitationTable } from "@/components/employees/PendingInvitationTable"

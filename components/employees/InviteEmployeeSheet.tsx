@@ -12,8 +12,11 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { inviteEmployee, getDepartments, getPositions } from "@/lib/employees/actions"
-import type { Department, Position } from "@/lib/employees/types"
+import { inviteEmployee } from "@/lib/employees/actions"
+import { getDepartments } from "@/lib/departments/actions"
+import { getPositions } from "@/lib/positions/actions"
+import type { Department } from "@/lib/departments/types"
+import type { Position } from "@/lib/positions/types"
 import { toast } from "sonner"
 
 interface InviteEmployeeSheetProps {
@@ -283,7 +286,7 @@ export function InviteEmployeeSheet({
                   </option>
                   {positions.map((pos) => (
                     <option key={pos.id} value={pos.id}>
-                      {pos.name}
+                      {pos.title}
                     </option>
                   ))}
                 </select>

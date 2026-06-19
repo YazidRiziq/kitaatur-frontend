@@ -8,6 +8,8 @@ import {
   UserPlus,
   CalendarDays,
   LayoutDashboard,
+  FolderTree,
+  Briefcase,
   MessageCircleQuestionMark,
   LogOut,
 } from "lucide-react";
@@ -21,6 +23,8 @@ export function Sidebar() {
     { name: "Karyawan", href: "/employees", icon: UserPlus },
     { name: "Data Absensi", href: "/attendance", icon: CalendarDays },
     { name: "Pengajuan Cuti", href: "/leave", icon: Users },
+    { name: "Departemen", href: "/departments", icon: FolderTree },
+    { name: "Jabatan", href: "/positions", icon: Briefcase },
   ];
 
   return (

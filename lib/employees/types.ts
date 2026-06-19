@@ -64,16 +64,6 @@ export interface RevokeInvitationResponse {
   }
 }
 
-export interface Department {
-  id: string
-  name: string
-}
-
-export interface Position {
-  id: string
-  name: string
-}
-
 export interface EmployeeFilters {
   search?: string
   department_id?: string

@@ -1,7 +1,8 @@
 "use client"
 
 import { Search } from "lucide-react"
-import type { Department, Position } from "@/lib/employees/types"
+import type { Department } from "@/lib/departments/types"
+import type { Position } from "@/lib/positions/types"
 
 interface EmployeeFilterBarProps {
   search: string
@@ -67,7 +68,7 @@ export function EmployeeFilterBar({
           <option value="">Semua Jabatan</option>
           {positions.map((pos) => (
             <option key={pos.id} value={pos.id}>
-              {pos.name}
+              {pos.title}
             </option>
           ))}
         </select>
