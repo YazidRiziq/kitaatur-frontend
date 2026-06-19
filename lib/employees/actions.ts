@@ -10,6 +10,8 @@ import type {
   PendingInvitation,
   EmployeeFilters,
   PaginatedResponse,
+  Department,
+  Position,
 } from "@/lib/employees/types"
 
 async function getAccessToken(): Promise<string> {
@@ -144,4 +146,40 @@ export async function revokeInvitation(
   }
 
   return response.json()
+}
+
+export async function getDepartments(
+  companyId: string
+): Promise<Department[]> {
+  const token = await getAccessToken()
+
+  const response = await fetch(
+    apiUrl(`/departments/company/${companyId}`),
+    { headers: { Authorization: `Bearer ${token}` } }
+  )
+
+  if (!response.ok) {
+    throw new Error("Gagal memuat data departemen")
+  }
+
+  const json = await response.json()
+  return json?.data ?? json ?? []
+}
+
+export async function getPositions(
+  companyId: string
+): Promise<Position[]> {
+  const token = await getAccessToken()
+
+  const response = await fetch(
+    apiUrl(`/positions/company/${companyId}`),
+    { headers: { Authorization: `Bearer ${token}` } }
+  )
+
+  if (!response.ok) {
+    throw new Error("Gagal memuat data jabatan")
+  }
+
+  const json = await response.json()
+  return json?.data ?? json ?? []
 }

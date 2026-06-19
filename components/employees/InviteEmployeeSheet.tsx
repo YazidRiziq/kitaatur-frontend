@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { inviteEmployee } from "@/lib/employees/actions"
+import { inviteEmployee, getDepartments, getPositions } from "@/lib/employees/actions"
 import type { Department, Position } from "@/lib/employees/types"
 import { toast } from "sonner"
 
@@ -20,20 +20,14 @@ interface InviteEmployeeSheetProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   onSuccess: () => void
-  departments: Department[]
-  positions: Position[]
-  loadingDepartments: boolean
-  loadingPositions: boolean
+  companyId: string
 }
 
 export function InviteEmployeeSheet({
   open,
   onOpenChange,
   onSuccess,
-  departments,
-  positions,
-  loadingDepartments,
-  loadingPositions,
+  companyId,
 }: InviteEmployeeSheetProps) {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
@@ -44,17 +38,37 @@ export function InviteEmployeeSheet({
   const [submitting, setSubmitting] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
 
+  const [departments, setDepartments] = useState<Department[]>([])
+  const [positions, setPositions] = useState<Position[]>([])
+  const [loadingDropdowns, setLoadingDropdowns] = useState(false)
+
   useEffect(() => {
-    if (open) {
-      setName("")
-      setEmail("")
-      setPhone("")
-      setEmployeeNumber("")
-      setDepartmentId("")
-      setPositionId("")
-      setErrors({})
-    }
-  }, [open])
+    if (!open) return
+
+    setName("")
+    setEmail("")
+    setPhone("")
+    setEmployeeNumber("")
+    setDepartmentId("")
+    setPositionId("")
+    setErrors({})
+
+    setLoadingDropdowns(true)
+    Promise.all([
+      getDepartments(companyId),
+      getPositions(companyId),
+    ])
+      .then(([depts, pos]) => {
+        setDepartments(depts)
+        setPositions(pos)
+      })
+      .catch(() => {
+        toast.error("Gagal memuat data departemen dan jabatan")
+        setDepartments([])
+        setPositions([])
+      })
+      .finally(() => setLoadingDropdowns(false))
+  }, [open, companyId])
 
   function validate(): boolean {
     const newErrors: Record<string, string> = {}
@@ -229,10 +243,12 @@ export function InviteEmployeeSheet({
                   id="department"
                   value={departmentId}
                   onChange={(e) => setDepartmentId(e.target.value)}
-                  disabled={loadingDepartments}
+                  disabled={loadingDropdowns}
                   className="w-full h-10 pl-10 pr-4 rounded-xl bg-surface-container-low border-none text-sm font-medium text-on-surface focus:ring-2 focus:ring-primary/20 cursor-pointer outline-none disabled:opacity-50 appearance-none"
                 >
-                  <option value="">Pilih Departemen</option>
+                  <option value="">
+                    {loadingDropdowns ? "Memuat..." : "Pilih Departemen"}
+                  </option>
                   {departments.map((dept) => (
                     <option key={dept.id} value={dept.id}>
                       {dept.name}
@@ -261,10 +277,12 @@ export function InviteEmployeeSheet({
                   id="position"
                   value={positionId}
                   onChange={(e) => setPositionId(e.target.value)}
-                  disabled={loadingPositions}
+                  disabled={loadingDropdowns}
                   className="w-full h-10 pl-10 pr-4 rounded-xl bg-surface-container-low border-none text-sm font-medium text-on-surface focus:ring-2 focus:ring-primary/20 cursor-pointer outline-none disabled:opacity-50 appearance-none"
                 >
-                  <option value="">Pilih Jabatan</option>
+                  <option value="">
+                    {loadingDropdowns ? "Memuat..." : "Pilih Jabatan"}
+                  </option>
                   {positions.map((pos) => (
                     <option key={pos.id} value={pos.id}>
                       {pos.name}
@@ -280,7 +298,7 @@ export function InviteEmployeeSheet({
             <div className="pt-2">
               <Button
                 type="submit"
-                disabled={submitting}
+                disabled={submitting || loadingDropdowns}
                 className="w-full h-11 rounded-xl bg-primary hover:bg-primary/90 font-semibold text-white"
               >
                 {submitting ? (

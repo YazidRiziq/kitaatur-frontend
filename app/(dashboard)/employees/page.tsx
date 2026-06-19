@@ -272,10 +272,7 @@ export default function EmployeesPage() {
         open={sheetOpen}
         onOpenChange={setSheetOpen}
         onSuccess={handleSheetSuccess}
-        departments={departments}
-        positions={positions}
-        loadingDepartments={loadingDepartments}
-        loadingPositions={loadingPositions}
+        companyId={companyId}
       />
     </div>
   )
