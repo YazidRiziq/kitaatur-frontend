@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { SidebarItem } from "@/components/layout/SidebarItem";
 import {
   Users,
+  UserPlus,
   CalendarDays,
   LayoutDashboard,
   MessageCircleQuestionMark,
@@ -17,6 +18,7 @@ export function Sidebar() {
 
   const navItems = [
     { name: "Overview", href: "/overview", icon: LayoutDashboard },
+    { name: "Karyawan", href: "/employees", icon: UserPlus },
     { name: "Data Absensi", href: "/attendance", icon: CalendarDays },
     { name: "Pengajuan Cuti", href: "/leave", icon: Users },
   ];

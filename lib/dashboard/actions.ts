@@ -17,7 +17,7 @@ export async function getDashboardData(): Promise<DashboardData> {
   } = await supabase.auth.getSession()
   const baseUrl = process.env.NEXT_PUBLIC_API_URL
 
-  const response = await fetch(`${baseUrl}/me`, {
+  const response = await fetch(`${baseUrl}/auth/me`, {
     headers: { Authorization: `Bearer ${session?.access_token}` },
   })
 
@@ -26,13 +26,6 @@ export async function getDashboardData(): Promise<DashboardData> {
   }
 
   const data: DashboardData = await response.json()
-
-  cookieStore.set("kitaatur-dashboard", JSON.stringify(data), {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    maxAge: 60 * 60,
-  })
 
   return data
 }

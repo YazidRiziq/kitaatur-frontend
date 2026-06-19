@@ -1,0 +1,147 @@
+"use server"
+
+import { createClient } from "@/lib/supabase/server"
+import type {
+  InviteEmployeeInput,
+  InviteEmployeeResponse,
+  ResendInvitationResponse,
+  RevokeInvitationResponse,
+  Employee,
+  PendingInvitation,
+  EmployeeFilters,
+  PaginatedResponse,
+} from "@/lib/employees/types"
+
+async function getAccessToken(): Promise<string> {
+  const supabase = await createClient()
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
+  if (!session?.access_token) {
+    throw new Error("Token akses tidak tersedia. Silakan login kembali.")
+  }
+  return session.access_token
+}
+
+function apiUrl(path: string): string {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL
+  if (!baseUrl) {
+    throw new Error("API URL tidak dikonfigurasi")
+  }
+  return `${baseUrl}${path}`
+}
+
+export async function inviteEmployee(
+  input: InviteEmployeeInput
+): Promise<InviteEmployeeResponse> {
+  const token = await getAccessToken()
+
+  const response = await fetch(apiUrl("/employees/invite"), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(input),
+  })
+
+  if (!response.ok) {
+    const body = await response.json().catch(() => null)
+    throw new Error(body?.message || "Gagal mengirim undangan")
+  }
+
+  return response.json()
+}
+
+export async function getActiveEmployees(
+  companyId: string,
+  filters: EmployeeFilters = {}
+): Promise<PaginatedResponse<Employee>> {
+  const token = await getAccessToken()
+  const params = new URLSearchParams()
+
+  if (filters.search) params.set("search", filters.search)
+  if (filters.department_id) params.set("department_id", filters.department_id)
+  if (filters.position_id) params.set("position_id", filters.position_id)
+  if (filters.page) params.set("page", String(filters.page))
+
+  const queryString = params.toString()
+  const url = apiUrl(`/employees/company/${companyId}${queryString ? `?${queryString}` : ""}`)
+
+  const response = await fetch(url, {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+
+  if (!response.ok) {
+    throw new Error("Gagal memuat data karyawan")
+  }
+
+  return response.json()
+}
+
+export async function getPendingInvitations(
+  companyId: string,
+  filters: EmployeeFilters = {}
+): Promise<PaginatedResponse<PendingInvitation>> {
+  const token = await getAccessToken()
+  const params = new URLSearchParams()
+
+  if (filters.search) params.set("search", filters.search)
+  if (filters.department_id) params.set("department_id", filters.department_id)
+  if (filters.position_id) params.set("position_id", filters.position_id)
+  if (filters.page) params.set("page", String(filters.page))
+
+  const queryString = params.toString()
+  const url = apiUrl(`/employees/pending/${companyId}${queryString ? `?${queryString}` : ""}`)
+
+  const response = await fetch(url, {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+
+  if (!response.ok) {
+    throw new Error("Gagal memuat data undangan tertunda")
+  }
+
+  return response.json()
+}
+
+export async function resendInvitation(
+  id: string
+): Promise<ResendInvitationResponse> {
+  const token = await getAccessToken()
+
+  const response = await fetch(apiUrl(`/employees/${id}/resend`), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  })
+
+  if (!response.ok) {
+    const body = await response.json().catch(() => null)
+    throw new Error(body?.message || "Gagal mengirim ulang undangan")
+  }
+
+  return response.json()
+}
+
+export async function revokeInvitation(
+  id: string
+): Promise<RevokeInvitationResponse> {
+  const token = await getAccessToken()
+
+  const response = await fetch(apiUrl(`/employees/${id}/revoke`), {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+
+  if (!response.ok) {
+    const body = await response.json().catch(() => null)
+    throw new Error(body?.message || "Gagal membatalkan undangan")
+  }
+
+  return response.json()
+}
