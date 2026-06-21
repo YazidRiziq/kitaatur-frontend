@@ -43,7 +43,13 @@ export function RegisterForm() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form action={handleSubmit} className="space-y-5">
+        <form 
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSubmit(new FormData(e.currentTarget));
+          }} 
+          className="space-y-5"
+        >
           {error && (
             <div className="flex items-center gap-2 rounded-xl bg-red-50 p-3 text-sm text-red-600">
               <AlertCircle size={16} />
