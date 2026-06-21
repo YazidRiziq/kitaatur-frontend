@@ -1,5 +1,4 @@
 "use client"
-/* eslint-disable react-hooks/set-state-in-effect */
 
 import { useState, useEffect, useRef, useCallback } from "react"
 import { UserPlus, Users, Clock } from "lucide-react"
@@ -11,6 +10,8 @@ import type {
 } from "@/lib/employees/types"
 import type { Department } from "@/lib/departments/types"
 import type { Position } from "@/lib/positions/types"
+import { getDepartments } from "@/lib/departments/actions"
+import { getPositions } from "@/lib/positions/actions"
 import { EmployeeFilterBar } from "@/components/employees/EmployeeFilterBar"
 import { EmployeeTable } from "@/components/employees/EmployeeTable"
 import { PendingInvitationTable } from "@/components/employees/PendingInvitationTable"
@@ -43,8 +44,10 @@ export default function EmployeesPage() {
   const [loadingDepartments, setLoadingDepartments] = useState(true)
   const [loadingPositions, setLoadingPositions] = useState(true)
 
+  // Debounce Search Timer
   const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
+  // Debounce Search Input
   useEffect(() => {
     if (searchTimerRef.current) {
       clearTimeout(searchTimerRef.current)
@@ -59,102 +62,141 @@ export default function EmployeesPage() {
     }
   }, [search])
 
+  // Fetch Departments
   useEffect(() => {
-    if (!baseUrl) return
-    const controller = new AbortController()
+    let cancelled = false;
 
-    fetch(`${baseUrl}/departments`, { signal: controller.signal })
-      .then((res) => res.json())
-      .then((response) => {
-        if (response && response.data) {
-          setDepartments(response.data)
-        } else if (Array.isArray(response)) {
-          setDepartments(response)
-        } else {
-          setDepartments([])
+    const loadDepartments = async () => {
+      setLoadingDepartments(true);
+      try {
+        const data = await getDepartments();
+        
+        if (!cancelled) {
+          setDepartments(data);
         }
-      })
-      .catch(() => setDepartments([]))
-      .finally(() => setLoadingDepartments(false))
+      } catch {
+        if (!cancelled) {
+          setDepartments([]);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoadingDepartments(false);
+        }
+      }
+    };
 
-    return () => controller.abort()
-  }, [baseUrl])
+    loadDepartments();
 
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // Fetch Positions
   useEffect(() => {
-    if (!baseUrl) return
-    const controller = new AbortController()
+    let cancelled = false;
 
-    fetch(`${baseUrl}/positions`, { signal: controller.signal })
-      .then((res) => res.json())
-      .then((response) => {
-        if (response && response.data) {
-          setPositions(response.data)
-        } else if (Array.isArray(response)) {
-          setPositions(response)
-        } else {
-          setPositions([])
+    const loadPositions = async () => {
+      setLoadingPositions(true);
+      try {
+        const data = await getPositions();
+        
+        if (!cancelled) {
+          setPositions(data);
         }
-      })
-      .catch(() => setPositions([]))
-      .finally(() => setLoadingPositions(false))
+      } catch {
+        if (!cancelled) {
+          setPositions([]);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoadingPositions(false);
+        }
+      }
+    };
 
-    return () => controller.abort()
-  }, [baseUrl])
+    loadPositions();
 
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // Fetch Active Employees
   const fetchActiveEmployees = useCallback(() => {
-    setLoadingActive(true)
-    let cancelled = false
-    getActiveEmployees({
-      search: debouncedSearch || undefined,
-      department_id: departmentId || undefined,
-      position_id: positionId || undefined,
-      page,
-    })
-      .then((res) => {
-        if (!cancelled) {
-          const normalized = Array.isArray(res) ? res : res?.data ?? []
-          setActiveEmployees(normalized)
-          setActivePagination(res?.pagination ?? null)
-        }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setActiveEmployees([])
-          setActivePagination(null)
-        }
-      })
-      .finally(() => {
-        if (!cancelled) setLoadingActive(false)
-      })
-    return () => { cancelled = true }
-  }, [debouncedSearch, departmentId, positionId, page])
+    setLoadingActive(true);
+    let cancelled = false;
 
+    const fetchData = async () => {
+      try {
+        const res = await getActiveEmployees({
+          search: debouncedSearch || undefined,
+          department_id: departmentId || undefined,
+          position_id: positionId || undefined,
+          page,
+        });
+
+        if (!cancelled) {
+          const normalized = Array.isArray(res) ? res : res?.data ?? [];
+          setActiveEmployees(normalized);
+          setActivePagination(res?.pagination ?? null);
+        }
+      } catch {
+        if (!cancelled) {
+          setActiveEmployees([]);
+          setActivePagination(null);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoadingActive(false);
+        }
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [debouncedSearch, departmentId, positionId, page]);
+
+  // Fetch Pending Invitations
   const fetchPendingInvitations = useCallback(() => {
-    setLoadingPending(true)
-    let cancelled = false
-    getPendingInvitations({
-      search: debouncedSearch || undefined,
-      department_id: departmentId || undefined,
-      position_id: positionId || undefined,
-      page,
-    })
-      .then((res) => {
+    setLoadingPending(true);
+    let cancelled = false;
+
+    const fetchData = async () => {
+      try {
+        const res = await getPendingInvitations({
+          search: debouncedSearch || undefined,
+          department_id: departmentId || undefined,
+          position_id: positionId || undefined,
+          page,
+        });
+
         if (!cancelled) {
-          setPendingInvitations(res.data)
-          setPendingPagination(res.pagination)
+          const normalized = Array.isArray(res) ? res : res?.data ?? [];
+          setPendingInvitations(normalized);
+          setPendingPagination(res?.pagination ?? null);
         }
-      })
-      .catch(() => {
+      } catch {
         if (!cancelled) {
-          setPendingInvitations([])
-          setPendingPagination(null)
+          setPendingInvitations([]);
+          setPendingPagination(null);
         }
-      })
-      .finally(() => {
-        if (!cancelled) setLoadingPending(false)
-      })
-    return () => { cancelled = true }
-  }, [debouncedSearch, departmentId, positionId, page])
+      } finally {
+        if (!cancelled) {
+          setLoadingPending(false);
+        }
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [debouncedSearch, departmentId, positionId, page]);
 
   useEffect(() => {
     if (activeTab !== "active") return
