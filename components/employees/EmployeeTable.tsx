@@ -11,6 +11,7 @@ interface EmployeeTableProps {
   onPageChange: (page: number) => void
 }
 
+// Komponen untuk menampilkan tabel karyawan aktif
 export function EmployeeTable({
   data,
   loading,
@@ -93,7 +94,7 @@ export function EmployeeTable({
                   </span>
                 </td>
                 <td className="px-6 py-5 text-sm text-on-surface-variant">
-                  {employee.position.name}
+                  {employee.position.title || "-"}
                 </td>
               </tr>
             ))}

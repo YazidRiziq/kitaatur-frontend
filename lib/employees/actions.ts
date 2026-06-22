@@ -53,6 +53,7 @@ export async function inviteEmployee(
   return response.json()
 }
 
+// Fungsi untuk mendapatkan daftar karyawan aktif dengan filter dan pagination
 export async function getActiveEmployees(
   filters: EmployeeFilters = {}
 ): Promise<PaginatedResponse<Employee>> {
@@ -62,7 +63,7 @@ export async function getActiveEmployees(
   if (filters.search) params.set("search", filters.search)
   if (filters.department_id) params.set("department_id", filters.department_id)
   if (filters.position_id) params.set("position_id", filters.position_id)
-  if (filters.page) params.set("page", String(filters.page))
+  if (filters.page) params.set("page", String(filters.page))  
 
   const queryString = params.toString()
   const url = apiUrl(`/employees${queryString ? `?${queryString}` : ""}`)
