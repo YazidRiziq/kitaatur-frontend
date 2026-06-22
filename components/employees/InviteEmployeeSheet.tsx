@@ -19,12 +19,14 @@ import type { Department } from "@/lib/departments/types"
 import type { Position } from "@/lib/positions/types"
 import { toast } from "sonner"
 
+// Props untuk InviteEmployeeSheet
 interface InviteEmployeeSheetProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   onSuccess: () => void
 }
 
+// Komponen untuk mengundang karyawan baru melalui sheet
 export function InviteEmployeeSheet({
   open,
   onOpenChange,
@@ -43,6 +45,7 @@ export function InviteEmployeeSheet({
   const [positions, setPositions] = useState<Position[]>([])
   const [loadingDropdowns, setLoadingDropdowns] = useState(false)
 
+  // Fetch data departemen dan jabatan saat sheet dibuka
   useEffect(() => {
     if (!open) return
 
@@ -71,6 +74,7 @@ export function InviteEmployeeSheet({
       .finally(() => setLoadingDropdowns(false))
   }, [open])
 
+  // Validasi input sebelum mengirim undangan
   function validate(): boolean {
     const newErrors: Record<string, string> = {}
 
@@ -93,6 +97,7 @@ export function InviteEmployeeSheet({
     return Object.keys(newErrors).length === 0
   }
 
+  // Handle submit form untuk mengirim undangan karyawan baru
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
 

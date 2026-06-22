@@ -78,6 +78,7 @@ export async function getActiveEmployees(
   return response.json()
 }
 
+// Fungsi untuk mendapatkan daftar undangan tertunda dengan filter dan pagination
 export async function getPendingInvitations(
   filters: EmployeeFilters = {}
 ): Promise<PaginatedResponse<PendingInvitation>> {

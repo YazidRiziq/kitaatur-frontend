@@ -20,8 +20,6 @@ import { InviteEmployeeSheet } from "@/components/employees/InviteEmployeeSheet"
 type Tab = "active" | "pending"
 
 export default function EmployeesPage() {
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL
-
   const [activeTab, setActiveTab] = useState<Tab>("active")
   const [sheetOpen, setSheetOpen] = useState(false)
 
@@ -198,22 +196,26 @@ export default function EmployeesPage() {
     };
   }, [debouncedSearch, departmentId, positionId, page]);
 
+  // Fetch data ketika tab aktif berubah atau berada di halaman aktif
   useEffect(() => {
     if (activeTab !== "active") return
     const cleanup = fetchActiveEmployees()
     return () => cleanup?.()
   }, [activeTab, fetchActiveEmployees])
 
+  // Fetch data ketika tab pending aktif atau berada di halaman pending
   useEffect(() => {
     if (activeTab !== "pending") return
     const cleanup = fetchPendingInvitations()
     return () => cleanup?.()
   }, [activeTab, fetchPendingInvitations])
 
+  // Reset halaman ke 1 ketika filter berubah 
   useEffect(() => {
     setPage(1)
   }, [debouncedSearch, departmentId, positionId, activeTab])
 
+  // Refresh data setelah berhasil mengundang karyawan baru
   function handleRefresh() {
     if (activeTab === "active") {
       fetchActiveEmployees()
@@ -222,6 +224,7 @@ export default function EmployeesPage() {
     }
   }
 
+  // Setelah berhasil mengundang karyawan baru, langsung tampilkan tab undangan tertunda
   function handleSheetSuccess() {
     setActiveTab("pending")
   }

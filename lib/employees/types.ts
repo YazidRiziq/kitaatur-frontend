@@ -20,7 +20,7 @@ export interface PendingInvitation {
   id: string
   name: string
   email: string
-  invitation_code: string
+  invitation_token: string
   invitation_expires_at: string
 }
 

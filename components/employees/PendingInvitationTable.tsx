@@ -70,6 +70,7 @@ export function PendingInvitationTable({
     }
   }
 
+  // Fungsi untuk memformat tanggal kadaluarsa undangan dengan informasi tambahan seperti "Kadaluarsa", "Hari ini", "Besok", atau jumlah hari tersisa
   function formatExpiry(dateStr: string): string {
     const date = new Date(dateStr)
     const now = new Date()
@@ -139,14 +140,14 @@ export function PendingInvitationTable({
                 <td className="px-6 py-5">
                   <div className="flex items-center gap-2">
                     <code className="px-2.5 py-1 bg-amber-50 text-amber-700 rounded-lg text-xs font-mono font-bold tracking-wider">
-                      {invitation.invitation_code}
+                      {invitation.invitation_token}
                     </code>
                     <button
-                      onClick={() => handleCopyCode(invitation.invitation_code)}
+                      onClick={() => handleCopyCode(invitation.invitation_token)}
                       className="p-1 text-outline hover:text-primary transition-colors"
                       title="Salin kode"
                     >
-                      {copiedCode === invitation.invitation_code ? (
+                      {copiedCode === invitation.invitation_token ? (
                         <Check size={14} className="text-primary" />
                       ) : (
                         <Copy size={14} />
