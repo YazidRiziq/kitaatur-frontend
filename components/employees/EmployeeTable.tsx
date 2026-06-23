@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react"
+import { ChevronLeft, ChevronRight, Eye, Loader2 } from "lucide-react"
 import type { Employee, PaginatedResponse } from "@/lib/employees/types"
 
 interface EmployeeTableProps {
@@ -9,6 +9,7 @@ interface EmployeeTableProps {
   loading: boolean
   pagination: PaginatedResponse<Employee>["pagination"] | null
   onPageChange: (page: number) => void
+  onDetail?: (employee: Employee) => void
 }
 
 // Komponen untuk menampilkan tabel karyawan aktif
@@ -17,6 +18,7 @@ export function EmployeeTable({
   loading,
   pagination,
   onPageChange,
+  onDetail,
 }: EmployeeTableProps) {
   if (loading) {
     return (
@@ -46,6 +48,7 @@ export function EmployeeTable({
               <th className="px-6 py-4">NIK</th>
               <th className="px-6 py-4">Departemen</th>
               <th className="px-6 py-4">Jabatan</th>
+              <th className="px-6 py-4 text-center">Aksi</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-surface-variant/10">
@@ -95,6 +98,18 @@ export function EmployeeTable({
                 </td>
                 <td className="px-6 py-5 text-sm text-on-surface-variant">
                   {employee.position.title || "-"}
+                </td>
+                <td className="px-8 py-5 text-center">
+                  <button
+                    type="button"
+                    onClick={() => onDetail?.(employee)}
+                    disabled={!onDetail}
+                    className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-primary bg-primary/5 hover:bg-primary/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    title="Lihat detail karyawan"
+                  >
+                    <Eye size={15} />
+                    Detail
+                  </button>
                 </td>
               </tr>
             ))}
