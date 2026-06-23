@@ -16,12 +16,15 @@ import { EmployeeFilterBar } from "@/components/employees/EmployeeFilterBar"
 import { EmployeeTable } from "@/components/employees/EmployeeTable"
 import { PendingInvitationTable } from "@/components/employees/PendingInvitationTable"
 import { InviteEmployeeSheet } from "@/components/employees/InviteEmployeeSheet"
+import { EmployeeDetailSheet } from "@/components/employees/EmployeeDetailSheet"
 
 type Tab = "active" | "pending"
 
 export default function EmployeesPage() {
   const [activeTab, setActiveTab] = useState<Tab>("active")
   const [sheetOpen, setSheetOpen] = useState(false)
+  const [detailSheetOpen, setDetailSheetOpen] = useState(false)
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null)
 
   const [search, setSearch] = useState("")
   const [debouncedSearch, setDebouncedSearch] = useState("")
@@ -229,6 +232,19 @@ export default function EmployeesPage() {
     setActiveTab("pending")
   }
 
+  function handleOpenDetail(employee: Employee) {
+    setSelectedEmployee(employee)
+    setDetailSheetOpen(true)
+  }
+
+  function handleDetailOpenChange(open: boolean) {
+    setDetailSheetOpen(open)
+
+    if (!open) {
+      setSelectedEmployee(null)
+    }
+  }
+
   return (
     <div className="pl-8 pr-8 flex-1">
       <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -296,6 +312,7 @@ export default function EmployeesPage() {
             loading={loadingActive}
             pagination={activePagination}
             onPageChange={setPage}
+            onDetail={handleOpenDetail}
           />
         ) : (
           <PendingInvitationTable
@@ -312,6 +329,12 @@ export default function EmployeesPage() {
         open={sheetOpen}
         onOpenChange={setSheetOpen}
         onSuccess={handleSheetSuccess}
+      />
+
+      <EmployeeDetailSheet
+        open={detailSheetOpen}
+        employee={selectedEmployee}
+        onOpenChange={handleDetailOpenChange}
       />
     </div>
   )
