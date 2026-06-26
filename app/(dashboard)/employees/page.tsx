@@ -232,6 +232,7 @@ export default function EmployeesPage() {
     setActiveTab("pending")
   }
 
+  // Buka detail karyawan ketika tombol detail diklik 
   function handleOpenDetail(employee: Employee) {
     setSelectedEmployee(employee)
     setDetailSheetOpen(true)
@@ -243,6 +244,11 @@ export default function EmployeesPage() {
     if (!open) {
       setSelectedEmployee(null)
     }
+  }
+
+  function handleEmployeeUpdated(employee: Employee) {
+    setSelectedEmployee(employee)
+    fetchActiveEmployees()
   }
 
   return (
@@ -334,7 +340,10 @@ export default function EmployeesPage() {
       <EmployeeDetailSheet
         open={detailSheetOpen}
         employee={selectedEmployee}
+        departments={departments}
+        positions={positions}
         onOpenChange={handleDetailOpenChange}
+        onUpdated={handleEmployeeUpdated}
       />
     </div>
   )

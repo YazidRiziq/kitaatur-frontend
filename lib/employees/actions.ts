@@ -4,6 +4,8 @@ import { createClient } from "@/lib/supabase/server"
 import type {
   InviteEmployeeInput,
   InviteEmployeeResponse,
+  UpdateEmployeeInput,
+  UpdateEmployeeResponse,
   ResendInvitationResponse,
   RevokeInvitationResponse,
   Employee,
@@ -74,6 +76,29 @@ export async function getActiveEmployees(
 
   if (!response.ok) {
     throw new Error("Gagal memuat data karyawan")
+  }
+
+  return response.json()
+}
+
+export async function updateEmployee(
+  id: string,
+  input: UpdateEmployeeInput
+): Promise<UpdateEmployeeResponse> {
+  const token = await getAccessToken()
+
+  const response = await fetch(apiUrl(`/employees/${id}`), {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(input),
+  })
+
+  if (!response.ok) {
+    const body = await response.json().catch(() => null)
+    throw new Error(body?.message || "Gagal memperbarui data karyawan")
   }
 
   return response.json()

@@ -33,6 +33,20 @@ export interface InviteEmployeeInput {
   position_id: string
 }
 
+export interface UpdateEmployeeInput {
+  name: string
+  email: string
+  phone?: string | null
+  employee_number?: string | null
+  department_id: string
+  position_id: string
+}
+
+export interface UpdateEmployeeResponse {
+  message: string
+  data: Employee
+}
+
 export interface InviteEmployeeResponse {
   message: string
   data: {
