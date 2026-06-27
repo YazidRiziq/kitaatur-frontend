@@ -164,20 +164,23 @@ export function EmployeeDetailSheet({
   async function handleDeactivate() {
     if (!employee) return;
 
+    if (!deactivateReason.trim()) {
+      toast.error("Alasan penonaktifan wajib diisi");
+      return;
+    }
+
     setDeactivating(true);
     try {
       await deactivateEmployee(employee.id, {
-        reason: deactivateReason.trim() || undefined,
+        reason: deactivateReason.trim(),
       });
 
       toast.success(`${employee.name} berhasil dinonaktifkan`);
       setConfirmDeactivate(false);
       setDeactivateReason("");
       onDeactivated?.();
-    } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Gagal menonaktifkan karyawan",
-      );
+    } catch {
+      toast.error("Gagal menonaktifkan karyawan");
     } finally {
       setDeactivating(false);
     }
@@ -450,10 +453,7 @@ export function EmployeeDetailSheet({
                                   htmlFor="deactivate-reason"
                                   className="text-xs font-semibold text-on-surface-variant"
                                 >
-                                  Alasan Nonaktif{" "}
-                                  <span className="text-outline">
-                                    (opsional)
-                                  </span>
+                                  Alasan Nonaktif <span className="text-error">(wajib diisi)</span>
                                 </Label>
                                 <textarea
                                   id="deactivate-reason"
