@@ -3,12 +3,12 @@
 import * as React from "react";
 import Image from "next/image";
 import { Dialog as DialogPrimitive } from "radix-ui";
-import { Loader2, Pencil, Save, X } from "lucide-react";
+import { AlertTriangle, Loader2, Pencil, Save, X } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { updateEmployee } from "@/lib/employees/actions";
+import { updateEmployee, deactivateEmployee } from "@/lib/employees/actions";
 import type { Employee } from "@/lib/employees/types";
 import type { Department } from "@/lib/departments/types";
 import type { Position } from "@/lib/positions/types";
@@ -20,6 +20,7 @@ interface EmployeeDetailSheetProps {
   positions: Position[];
   onOpenChange: (open: boolean) => void;
   onUpdated?: (employee: Employee) => void;
+  onDeactivated?: () => void;
 }
 
 function formatDate(dateStr: string): string {
@@ -66,9 +67,13 @@ export function EmployeeDetailSheet({
   positions,
   onOpenChange,
   onUpdated,
+  onDeactivated,
 }: EmployeeDetailSheetProps) {
   const [editing, setEditing] = React.useState(false);
   const [submitting, setSubmitting] = React.useState(false);
+  const [confirmDeactivate, setConfirmDeactivate] = React.useState(false);
+  const [deactivating, setDeactivating] = React.useState(false);
+  const [deactivateReason, setDeactivateReason] = React.useState("");
 
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
@@ -83,6 +88,8 @@ export function EmployeeDetailSheet({
     if (!employee) return;
 
     setEditing(false);
+    setConfirmDeactivate(false);
+    setDeactivateReason("");
     setName(employee.name || "");
     setEmail(employee.email || "");
     setPhone(employee.phone || "");
@@ -147,10 +154,32 @@ export function EmployeeDetailSheet({
       toast.error(
         error instanceof Error
           ? error.message
-          : "Gagal memperbarui data karyawan"
+          : "Gagal memperbarui data karyawan",
       );
     } finally {
       setSubmitting(false);
+    }
+  }
+
+  async function handleDeactivate() {
+    if (!employee) return;
+
+    setDeactivating(true);
+    try {
+      await deactivateEmployee(employee.id, {
+        reason: deactivateReason.trim() || undefined,
+      });
+
+      toast.success(`${employee.name} berhasil dinonaktifkan`);
+      setConfirmDeactivate(false);
+      setDeactivateReason("");
+      onDeactivated?.();
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Gagal menonaktifkan karyawan",
+      );
+    } finally {
+      setDeactivating(false);
     }
   }
 
@@ -159,7 +188,7 @@ export function EmployeeDetailSheet({
       <DialogPrimitive.Portal>
         <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/20 backdrop-blur-sm duration-100 data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0" />
 
-        <DialogPrimitive.Content className="fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-3xl -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-3xl border border-surface-variant/20 bg-popover text-popover-foreground shadow-2xl outline-none duration-200 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95">
+        <DialogPrimitive.Content className="fixed left-1/2 top-1/2 z-50 flex max-h-[90vh] w-[calc(100%-2rem)] max-w-3xl -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-3xl border border-surface-variant/20 bg-popover text-popover-foreground shadow-2xl outline-none duration-200 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95">
           <div className="flex items-start justify-between gap-4 border-b border-surface-variant/20 p-6">
             <div>
               <DialogPrimitive.Title className="font-headline text-xl font-bold text-on-surface">
@@ -204,10 +233,13 @@ export function EmployeeDetailSheet({
               </p>
             </div>
           ) : (
-            <form onSubmit={handleSubmit}>
-              <div className="max-h-[75vh] overflow-y-auto p-6">
+            <form
+              onSubmit={handleSubmit}
+              className="flex min-h-0 flex-1 flex-col"
+            >
+              <div className="flex-1 min-h-0 overflow-y-auto p-6">
                 <div className="mb-5 overflow-hidden rounded-3xl border border-surface-variant/20 bg-surface-container-lowest">
-                  <div className="h-20 bg-gradient-to-r from-primary/20 via-primary/10 to-transparent" />
+                  <div className="h-20 bg-linear-to-r from-primary/20 via-primary/10 to-transparent" />
 
                   <div className="-mt-8 flex flex-col gap-4 px-6 pb-6 sm:flex-row sm:items-end sm:justify-between">
                     <div className="flex items-end gap-4">
@@ -382,6 +414,102 @@ export function EmployeeDetailSheet({
                     </div>
                   )}
                 </div>
+
+                {!editing && (
+                  <div className="mt-5">
+                    <div className="rounded-2xl border border-error/20 bg-error/5 p-5">
+                      <div className="flex items-start gap-3">
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-error/10 text-error">
+                          <AlertTriangle size={18} />
+                        </div>
+
+                        <div className="min-w-0 flex-1">
+                          <h4 className="text-sm font-bold text-on-surface">
+                            Nonaktifkan Karyawan
+                          </h4>
+                          <p className="mt-1 text-xs text-on-surface-variant">
+                            Karyawan tidak akan muncul lagi di daftar Karyawan
+                            Aktif, tetapi riwayat absensi dan data terkait tetap
+                            tersimpan.
+                          </p>
+
+                          {!confirmDeactivate ? (
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              size="sm"
+                              className="mt-4 rounded-xl"
+                              onClick={() => setConfirmDeactivate(true)}
+                            >
+                              Nonaktifkan Karyawan
+                            </Button>
+                          ) : (
+                            <div className="mt-4 space-y-3">
+                              <div>
+                                <Label
+                                  htmlFor="deactivate-reason"
+                                  className="text-xs font-semibold text-on-surface-variant"
+                                >
+                                  Alasan Nonaktif{" "}
+                                  <span className="text-outline">
+                                    (opsional)
+                                  </span>
+                                </Label>
+                                <textarea
+                                  id="deactivate-reason"
+                                  value={deactivateReason}
+                                  onChange={(e) =>
+                                    setDeactivateReason(e.target.value)
+                                  }
+                                  placeholder="Contoh: Resign dari perusahaan, efektif 30 Juni 2026"
+                                  rows={3}
+                                  className="mt-1.5 w-full rounded-xl border border-surface-variant/30 bg-surface-container-lowest px-4 py-3 text-sm font-medium text-on-surface outline-none focus:ring-2 focus:ring-primary/20 resize-none"
+                                />
+                              </div>
+
+                              <div className="flex items-center justify-end gap-2">
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  className="rounded-xl"
+                                  disabled={deactivating}
+                                  onClick={() => {
+                                    setConfirmDeactivate(false);
+                                    setDeactivateReason("");
+                                  }}
+                                >
+                                  Batal
+                                </Button>
+
+                                <Button
+                                  type="button"
+                                  variant="destructive"
+                                  size="sm"
+                                  className="rounded-xl"
+                                  disabled={deactivating}
+                                  onClick={handleDeactivate}
+                                >
+                                  {deactivating ? (
+                                    <>
+                                      <Loader2
+                                        size={15}
+                                        className="animate-spin"
+                                      />
+                                      Menonaktifkan...
+                                    </>
+                                  ) : (
+                                    "Ya, Nonaktifkan"
+                                  )}
+                                </Button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {editing && (

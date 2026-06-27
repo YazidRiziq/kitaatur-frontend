@@ -251,6 +251,12 @@ export default function EmployeesPage() {
     fetchActiveEmployees()
   }
 
+  function handleEmployeeDeactivated() {
+    setDetailSheetOpen(false)
+    setSelectedEmployee(null)
+    fetchActiveEmployees()
+  }
+
   return (
     <div className="pl-8 pr-8 flex-1">
       <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -344,6 +350,7 @@ export default function EmployeesPage() {
         positions={positions}
         onOpenChange={handleDetailOpenChange}
         onUpdated={handleEmployeeUpdated}
+        onDeactivated={handleEmployeeDeactivated}
       />
     </div>
   )

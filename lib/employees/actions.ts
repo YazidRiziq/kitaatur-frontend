@@ -6,6 +6,8 @@ import type {
   InviteEmployeeResponse,
   UpdateEmployeeInput,
   UpdateEmployeeResponse,
+  DeactivateEmployeeInput,
+  DeactivateEmployeeResponse,
   ResendInvitationResponse,
   RevokeInvitationResponse,
   Employee,
@@ -166,6 +168,29 @@ export async function revokeInvitation(
   if (!response.ok) {
     const body = await response.json().catch(() => null)
     throw new Error(body?.message || "Gagal membatalkan undangan")
+  }
+
+  return response.json()
+}
+
+export async function deactivateEmployee(
+  id: string,
+  input: DeactivateEmployeeInput = {}
+): Promise<DeactivateEmployeeResponse> {
+  const token = await getAccessToken()
+
+  const response = await fetch(apiUrl(`/employees/${id}/status`), {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ reason: input.reason }),
+  })
+
+  if (!response.ok) {
+    const body = await response.json().catch(() => null)
+    throw new Error(body?.message || "Gagal menonaktifkan karyawan")
   }
 
   return response.json()

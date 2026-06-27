@@ -47,6 +47,35 @@ export interface UpdateEmployeeResponse {
   data: Employee
 }
 
+export interface DeactivateEmployeeInput {
+  reason?: string
+}
+
+export interface DeactivateEmployeeResponse {
+  message: string
+  data: {
+    id: string
+    name: string
+    email: string
+    employee_number: string | null
+    status: string
+    deactivated_at: string | null
+    deactivation_reason: string | null
+    department: {
+      id: string
+      name: string
+    }
+    position: {
+      id: string
+      title: string
+    }
+    deactivatedBy: {
+      id: string
+      full_name: string
+    } | null
+  }
+}
+
 export interface InviteEmployeeResponse {
   message: string
   data: {
