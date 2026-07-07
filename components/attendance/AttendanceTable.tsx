@@ -1,32 +1,15 @@
-"use client";
+"use client"
 
-import Image from "next/image";
-import { Eye, ChevronLeft, ChevronRight, User } from "lucide-react";
-
-export interface AttendanceRecord {
-  id: string;
-  employee: {
-    name: string;
-    position: string;
-    avatarUrl: string | null;
-  };
-  checkIn: string;
-  status: "Tepat Waktu" | "Terlambat";
-}
-
-export interface AttendancePagination {
-  page: number;
-  totalPages: number;
-  total: number;
-  perPage: number;
-}
+import Image from "next/image"
+import { Eye, ChevronLeft, ChevronRight, User } from "lucide-react"
+import type { AttendanceRecord, AttendancePagination } from "@/lib/attendance/types"
 
 interface AttendanceTableProps {
-  data: AttendanceRecord[];
-  loading: boolean;
-  pagination: AttendancePagination | null;
-  onPageChange: (page: number) => void;
-  onViewDetail: (id: string) => void;
+  data: AttendanceRecord[]
+  loading: boolean
+  pagination: AttendancePagination | null
+  onPageChange: (page: number) => void
+  onViewDetail: (id: string) => void
 }
 
 function SkeletonRow() {
@@ -45,13 +28,16 @@ function SkeletonRow() {
         <div className="h-3.5 w-12 bg-surface-container animate-pulse rounded mx-auto" />
       </td>
       <td className="px-6 py-5 text-center">
+        <div className="h-3.5 w-12 bg-surface-container animate-pulse rounded mx-auto" />
+      </td>
+      <td className="px-6 py-5 text-center">
         <div className="h-5 w-20 bg-surface-container animate-pulse rounded-full mx-auto" />
       </td>
       <td className="px-6 py-5 text-right">
         <div className="h-8 w-8 bg-surface-container animate-pulse rounded-lg ml-auto" />
       </td>
     </tr>
-  );
+  )
 }
 
 export function AttendanceTable({
@@ -75,6 +61,9 @@ export function AttendanceTable({
                   Check-In
                 </th>
                 <th className="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase text-center tracking-wider">
+                  Check-Out
+                </th>
+                <th className="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase text-center tracking-wider">
                   Status
                 </th>
                 <th className="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase text-right tracking-wider">
@@ -92,7 +81,7 @@ export function AttendanceTable({
                 </>
               ) : data.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="px-6 py-16 text-center">
+                  <td colSpan={5} className="px-6 py-16 text-center">
                     <User size={40} className="mx-auto text-slate-300 mb-3" />
                     <p className="text-sm font-medium text-on-surface-variant">
                       Belum ada data kehadiran
@@ -145,6 +134,9 @@ export function AttendanceTable({
                         {row.checkIn}
                       </span>
                     </td>
+                    <td className="px-6 py-5 text-sm text-center font-medium text-on-surface-variant">
+                      {row.checkOut ?? "-"}
+                    </td>
                     <td className="px-6 py-5 text-center">
                       <span
                         className={`inline-flex px-3 py-1 rounded-full text-[11px] font-bold ${
@@ -187,21 +179,33 @@ export function AttendanceTable({
             >
               <ChevronLeft size={16} />
             </button>
-            {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map(
-              (pageNum) => (
-                <button
-                  key={pageNum}
-                  onClick={() => onPageChange(pageNum)}
-                  className={`w-8 h-8 flex items-center justify-center rounded-lg text-xs font-bold transition-all ${
-                    pageNum === pagination.page
-                      ? "bg-primary text-on-primary"
-                      : "border border-outline-variant/30 text-outline hover:border-primary hover:text-primary"
-                  }`}
-                >
-                  {pageNum}
-                </button>
-              )
-            )}
+            {Array.from({ length: pagination.totalPages }, (_, i) => i + 1)
+              .filter((p) => {
+                if (pagination.totalPages <= 5) return true
+                if (p === 1 || p === pagination.totalPages) return true
+                if (Math.abs(p - pagination.page) <= 1) return true
+                return false
+              })
+              .map((p, idx, arr) => {
+                const showEllipsis = idx > 0 && p - arr[idx - 1] > 1
+                return (
+                  <div key={p} className="flex items-center gap-2">
+                    {showEllipsis && (
+                      <span className="text-outline text-xs px-1">...</span>
+                    )}
+                    <button
+                      onClick={() => onPageChange(p)}
+                      className={`w-8 h-8 flex items-center justify-center rounded-lg text-xs font-bold transition-all ${
+                        p === pagination.page
+                          ? "bg-primary text-on-primary"
+                          : "border border-outline-variant/30 text-outline hover:border-primary hover:text-primary"
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  </div>
+                )
+              })}
             <button
               onClick={() => onPageChange(pagination.page + 1)}
               disabled={pagination.page >= pagination.totalPages}
@@ -213,5 +217,5 @@ export function AttendanceTable({
         </div>
       )}
     </div>
-  );
+  )
 }

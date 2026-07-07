@@ -1,6 +1,6 @@
-"use client";
+"use client"
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback } from "react"
 import {
   Download,
   UserCheck,
@@ -8,248 +8,192 @@ import {
   LogOut,
   Search,
   Loader2,
-} from "lucide-react";
-import { AttendanceStatCard } from "@/components/attendance/AttendanceStatCard";
-import {
-  AttendanceTable,
-  type AttendanceRecord,
-  type AttendancePagination,
-} from "@/components/attendance/AttendanceTable";
-import { useDashboard } from "@/lib/dashboard/dashboard-context";
-
-interface Department {
-  id: string;
-  name: string;
-}
-
-interface AttendanceStats {
-  hadir: number;
-  total: number;
-  terlambat: number;
-  belumCheckOut: number;
-}
+} from "lucide-react"
+import { toast } from "sonner"
+import { AttendanceStatCard } from "@/components/attendance/AttendanceStatCard"
+import { AttendanceTable } from "@/components/attendance/AttendanceTable"
+import { getAttendanceStats, getAttendances, getExportInfo } from "@/lib/attendance/actions"
+import { getDepartments } from "@/lib/departments/actions"
+import type { AttendanceRecord, AttendanceStats, AttendancePagination } from "@/lib/attendance/types"
+import type { Department } from "@/lib/departments/types"
 
 function formatDateToYYYYMMDD(date: Date): string {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, "0");
-  const d = String(date.getDate()).padStart(2, "0");
-  return `${y}-${m}-${d}`;
+  const y = date.getFullYear()
+  const m = String(date.getMonth() + 1).padStart(2, "0")
+  const d = String(date.getDate()).padStart(2, "0")
+  return `${y}-${m}-${d}`
 }
 
 function getToday(): string {
-  return formatDateToYYYYMMDD(new Date());
+  return formatDateToYYYYMMDD(new Date())
 }
 
-// Pintu Masuk Utama halaman absensi KitaAtur.com, Mulai dari sini ke bawah adalah isi dari halamannya.
 export default function AttendancePage() {
-  const { company } = useDashboard()
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-  const companyId = company.id;
+  const [date, setDate] = useState(getToday())
+  const [search, setSearch] = useState("")
+  const [debouncedSearch, setDebouncedSearch] = useState("")
+  const [departmentId, setDepartmentId] = useState("")
+  const [page, setPage] = useState(1)
 
-  // State untuk menyimpan nilai filter dan pencarian yang dipilih user
-  const [date, setDate] = useState<string>(getToday());
-  const [search, setSearch] = useState<string>("");
-  const [debouncedSearch, setDebouncedSearch] = useState<string>("");
-  const [departmentId, setDepartmentId] = useState<string>("");
-  const [page, setPage] = useState<number>(1);
+  const [stats, setStats] = useState<AttendanceStats | null>(null)
+  const [loadingStats, setLoadingStats] = useState(true)
 
-  const [stats, setStats] = useState<AttendanceStats | null>(null);
-  const [loadingStats, setLoadingStats] = useState<boolean>(true);
+  const [attendances, setAttendances] = useState<AttendanceRecord[]>([])
+  const [pagination, setPagination] = useState<AttendancePagination | null>(null)
+  const [loadingTable, setLoadingTable] = useState(true)
 
-  const [attendances, setAttendances] = useState<AttendanceRecord[]>([]);
-  const [pagination, setPagination] = useState<AttendancePagination | null>(
-    null
-  );
-  const [loadingTable, setLoadingTable] = useState<boolean>(true);
+  const [departments, setDepartments] = useState<Department[]>([])
+  const [exporting, setExporting] = useState(false)
+  const [exportError, setExportError] = useState<string | null>(null)
 
-  const [departments, setDepartments] = useState<Department[]>([]);
-  const [exporting, setExporting] = useState<boolean>(false);
-  const [exportError, setExportError] = useState<string | null>(null);
+  const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const pageResetRef = useRef(false)
 
-  /*
-    Ref untuk menyimpan timer debounce, biar bisa dibersihin kalo user terus ngetik
-    Sangat berguna buat ngatur jeda waktu pencarian nanti
-  */
-  const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  /*
-    Debounce search input, kode ini menahan pencarian selama 300 milidetik.
-    Jadi sistem akan nunggu sampai kamu berhenti ngetik sejenak, baru deh teksnya disimpan
-    ke laci debouncedSearch buat dikirim ke server.
-  */
   useEffect(() => {
     if (searchTimerRef.current) {
-      clearTimeout(searchTimerRef.current);
+      clearTimeout(searchTimerRef.current)
     }
     searchTimerRef.current = setTimeout(() => {
-      setDebouncedSearch(search.trim());
-    }, 300);
+      setDebouncedSearch(search.trim())
+    }, 300)
     return () => {
       if (searchTimerRef.current) {
-        clearTimeout(searchTimerRef.current);
+        clearTimeout(searchTimerRef.current)
       }
-    };
-  }, [search]);
+    }
+  }, [search])
 
-  /*
-    Ini adalah robot otomatis (useEffect) yang cuma jalan satu kali saat halaman
-    pertama kali dibuka. Tugasnya nelpon server (fetch) ke alamat /departments buat
-    minta daftar divisi (misal: HR, IT, Finance). Kalau datanya udah dapet, dimasukin
-    ke laci setDepartments. AbortController di sini fungsinya seperti "tombol batal" 
-    misal tiba-tiba internet putus.
-  */
   useEffect(() => {
-    if (!baseUrl) return;
-    const controller = new AbortController();
-    
-    fetch(`${baseUrl}/departments`, { signal: controller.signal })
-      .then((res) => res.json())
-      .then((response) => {
-        if (response && response.data) {
-           setDepartments(response.data);
-        } else if (Array.isArray(response)) {
-           setDepartments(response);
-        } else {
-           setDepartments([]); 
-        }
-      })
-      .catch(() => {
-        setDepartments([]);
-      });
-      
-    return () => controller.abort();
-  }, [baseUrl]);
+    let cancelled = false
 
-  /*
-    Fungsi ini buat ngambil data statistik absensi berdasarkan tanggal yang dipilih.
-    Mirip kayak yang di atas, tapi ini bisa dipanggil ulang setiap kali tanggalnya berubah.
-  */
+    const load = async () => {
+      try {
+        const data = await getDepartments()
+        if (!cancelled) setDepartments(data)
+      } catch {
+        if (!cancelled) setDepartments([])
+      }
+    }
+
+    load()
+    return () => { cancelled = true }
+  }, [])
+
   const fetchStats = useCallback(() => {
-    if (!baseUrl) return;
-    setLoadingStats(true);
+    setLoadingStats(true)
+    let cancelled = false
 
-    const params = new URLSearchParams();
-    params.set("company_id", companyId);
-    params.set("date", date);
-    
-    if (departmentId) {
-      params.set("department_id", departmentId);
+    const load = async () => {
+      try {
+        const data = await getAttendanceStats({
+          date,
+          department_id: departmentId || undefined,
+        })
+        if (!cancelled) setStats(data)
+      } catch {
+        if (!cancelled) setStats(null)
+      } finally {
+        if (!cancelled) setLoadingStats(false)
+      }
     }
 
-    const controller = new AbortController();
-    fetch(`${baseUrl}/attendances/stats?${params.toString()}`, {
-      signal: controller.signal,
-    })
-      .then((res) => res.json())
-      .then((data: AttendanceStats) => setStats(data))
-      .catch(() => setStats(null))
-      .finally(() => setLoadingStats(false));
-    return () => controller.abort();
-  }, [baseUrl, date, departmentId, companyId]);
+    load()
+    return () => { cancelled = true }
+  }, [date, departmentId])
 
-  // Panggil fungsi fetchStats setiap kali tanggal berubah, biar statistiknya selalu update
   useEffect(() => {
-    const cleanup = fetchStats();
-    return () => cleanup?.();
-  }, [fetchStats]);
+    const cleanup = fetchStats()
+    return () => cleanup()
+  }, [fetchStats])
 
-  /*
-    Fungsi ini buat ngambil data absensi karyawan berdasarkan filter yang
-    dipilih (tanggal, pencarian, department, halaman)
-  */
   const fetchAttendances = useCallback(() => {
-    if (!baseUrl) return;
-    setLoadingTable(true);
-    const params = new URLSearchParams();
-    params.set("date", date);
-    params.set("page", String(page));
-    if (debouncedSearch) params.set("search", debouncedSearch);
-    if (departmentId) params.set("department_id", departmentId);
+    setLoadingTable(true)
+    let cancelled = false
 
-    const controller = new AbortController();
-    fetch(`${baseUrl}/attendances?${params.toString()}`, {
-      signal: controller.signal,
-    })
-      .then((res) => res.json())
-      .then(
-        (data: {
-          data: AttendanceRecord[];
-          pagination: AttendancePagination;
-        }) => {
-          setAttendances(data.data);
-          setPagination(data.pagination);
+    const load = async () => {
+      try {
+        const res = await getAttendances({
+          date,
+          page,
+          search: debouncedSearch || undefined,
+          department_id: departmentId || undefined,
+        })
+        if (!cancelled) {
+          setAttendances(res.data)
+          setPagination(res.pagination)
         }
-      )
-      .catch(() => {
-        setAttendances([]);
-        setPagination(null);
-      })
-      .finally(() => setLoadingTable(false));
-    return () => controller.abort();
-  }, [baseUrl, date, page, debouncedSearch, departmentId]);
+      } catch {
+        if (!cancelled) {
+          setAttendances([])
+          setPagination(null)
+        }
+      } finally {
+        if (!cancelled) setLoadingTable(false)
+      }
+    }
 
-  /*
-    Panggil fungsi fetchAttendances setiap kali filter atau halaman berubah,
-    biar datanya selalu sesuai dengan pilihan user
-  */
+    load()
+    return () => { cancelled = true }
+  }, [date, page, debouncedSearch, departmentId])
+
   useEffect(() => {
-    const cleanup = fetchAttendances();
-    return () => cleanup?.();
-  }, [fetchAttendances]);
+    if (pageResetRef.current && page !== 1) return
+    pageResetRef.current = false
+    const cleanup = fetchAttendances()
+    return () => cleanup()
+  }, [fetchAttendances, page])
 
-  // Reset halaman ke 1 setiap kali filter pencarian, department, atau tanggal berubah
   useEffect(() => {
-    setPage(1);
-  }, [debouncedSearch, departmentId, date]);
+    pageResetRef.current = true
+    setPage(1)
+  }, [debouncedSearch, departmentId, date])
 
-  // Fungsi ini buat nge-handle proses export data absensi ke Excel
   const handleExport = async () => {
-    if (!baseUrl) return;
-    setExporting(true);
-    setExportError(null);
+    setExporting(true)
+    setExportError(null)
     try {
-      const params = new URLSearchParams();
-      params.set("date", date);
-      if (debouncedSearch) params.set("search", debouncedSearch);
-      if (departmentId) params.set("department_id", departmentId);
+      const { url, token } = await getExportInfo({
+        date,
+        search: debouncedSearch || undefined,
+        department_id: departmentId || undefined,
+      })
 
-      const res = await fetch(
-        `${baseUrl}/attendances/export?${params.toString()}`
-      );
-      if (!res.ok) throw new Error("Export failed");
+      const res = await fetch(url, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (!res.ok) throw new Error("Export failed")
 
-      const disposition = res.headers.get("Content-Disposition");
-      let filename = "attendance-report.xlsx";
+      const disposition = res.headers.get("Content-Disposition")
+      let filename = "attendance-report.xlsx"
       if (disposition) {
-        const match = disposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+        const match = disposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)
         if (match && match[1]) {
-          filename = match[1].replace(/['"]/g, "");
+          filename = match[1].replace(/['"]/g, "")
         }
       }
 
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      const blob = await res.blob()
+      const blobUrl = URL.createObjectURL(blob)
+      const a = document.createElement("a")
+      a.href = blobUrl
+      a.download = filename
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(blobUrl)
     } catch {
-      setExportError("Gagal mengekspor laporan. Silakan coba lagi.");
+      setExportError("Gagal mengekspor laporan. Silakan coba lagi.")
     } finally {
-      setExporting(false);
+      setExporting(false)
     }
-  };
+  }
 
-  // Fungsi ini buat nge-handle saat user klik tombol "View Detail" di tabel absensi
-  const handleViewDetail = (id: string) => {
-    console.log("View detail for attendance:", id);
-  };
+  const handleViewDetail = (_id: string) => {
+    toast.info("Fitur detail kehadiran akan segera hadir.")
+  }
 
   return (
-    <div className="pl-8 pr-8 flex-1">
+    <div className="px-8 flex-1">
       <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <h2 className="font-headline tracking-tight text-3xl font-bold text-on-surface">
@@ -331,7 +275,6 @@ export default function AttendancePage() {
             />
           </div>
           <div className="flex items-center gap-2">
-            {/* Dropdown untuk filter departemen */}
             <select
               className="bg-surface-container-low border-none rounded-2xl py-2.5 px-4 text-sm font-medium text-on-surface focus:ring-2 focus:ring-primary/20 cursor-pointer outline-none"
               value={departmentId}
@@ -345,7 +288,6 @@ export default function AttendancePage() {
               ))}
             </select>
 
-            {/* Input tanggal untuk filter absensi berdasarkan tanggal tertentu */}
             <input
               type="date"
               className="bg-surface-container-low border-none rounded-2xl py-2.5 px-4 text-sm font-medium text-on-surface focus:ring-2 focus:ring-primary/20 cursor-pointer outline-none"
@@ -364,5 +306,5 @@ export default function AttendancePage() {
         />
       </div>
     </div>
-  );
+  )
 }
