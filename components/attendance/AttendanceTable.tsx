@@ -1,8 +1,33 @@
 "use client"
 
 import Image from "next/image"
-import { Eye, ChevronLeft, ChevronRight, User } from "lucide-react"
-import type { AttendanceRecord, AttendancePagination } from "@/lib/attendance/types"
+import { Eye, ChevronLeft, ChevronRight, User, MapPin, MapPinOff, AlertCircle } from "lucide-react"
+import type { AttendanceRecord, AttendancePagination, LocationStatus } from "@/lib/attendance/types"
+
+function renderLocationBadge(status: LocationStatus) {
+  if (status === "in_radius") {
+    return (
+      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-bold bg-primary/10 text-primary">
+        <MapPin size={12} />
+        In Radius
+      </span>
+    )
+  }
+  if (status === "out_of_range") {
+    return (
+      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-bold bg-error/10 text-error">
+        <AlertCircle size={12} />
+        Di Luar Radius
+      </span>
+    )
+  }
+  return (
+    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-bold bg-surface-container text-on-surface-variant">
+      <MapPinOff size={12} />
+      Tanpa Lokasi
+    </span>
+  )
+}
 
 interface AttendanceTableProps {
   data: AttendanceRecord[]
@@ -66,6 +91,9 @@ export function AttendanceTable({
                 <th className="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase text-center tracking-wider">
                   Status
                 </th>
+                <th className="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase text-center tracking-wider">
+                  Lokasi
+                </th>
                 <th className="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase text-right tracking-wider">
                   Aksi
                 </th>
@@ -81,7 +109,7 @@ export function AttendanceTable({
                 </>
               ) : data.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-16 text-center">
+                  <td colSpan={6} className="px-6 py-16 text-center">
                     <User size={40} className="mx-auto text-slate-300 mb-3" />
                     <p className="text-sm font-medium text-on-surface-variant">
                       Belum ada data kehadiran
@@ -147,6 +175,16 @@ export function AttendanceTable({
                       >
                         {row.status}
                       </span>
+                    </td>
+                    <td className="px-6 py-5 text-center">
+                      <div className="flex flex-col items-center gap-0.5">
+                        {renderLocationBadge(row.locationStatus)}
+                        {row.locationLabel && row.locationStatus !== "no_location" && (
+                          <span className="text-[10px] text-on-surface-variant max-w-[140px] truncate">
+                            {row.locationLabel}
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td className="px-6 py-5 text-right">
                       <button

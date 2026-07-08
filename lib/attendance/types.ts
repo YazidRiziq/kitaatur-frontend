@@ -1,3 +1,5 @@
+export type LocationStatus = "in_radius" | "out_of_range" | "no_location"
+
 export interface AttendanceRecord {
   id: string
   employee: {
@@ -8,6 +10,8 @@ export interface AttendanceRecord {
   checkIn: string
   checkOut: string | null
   status: "Tepat Waktu" | "Terlambat"
+  locationStatus: LocationStatus
+  locationLabel?: string
 }
 
 export interface AttendanceStats {

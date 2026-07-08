@@ -9,9 +9,10 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { updateEmployee, deactivateEmployee } from "@/lib/employees/actions"
-import type { Employee } from "@/lib/employees/types"
+import type { Employee, WorkLocation } from "@/lib/employees/types"
 import type { Department } from "@/lib/departments/types"
 import type { Position } from "@/lib/positions/types"
+import { WorkLocationEditor } from "@/components/employees/WorkLocationEditor"
 
 interface EmployeeDetailSheetProps {
   open: boolean
@@ -74,6 +75,7 @@ export function EmployeeDetailSheet({
   const [confirmDeactivate, setConfirmDeactivate] = React.useState(false)
   const [deactivating, setDeactivating] = React.useState(false)
   const [deactivateReason, setDeactivateReason] = React.useState("")
+  const [workLocation, setWorkLocation] = React.useState<WorkLocation | null>(null)
 
   const [name, setName] = React.useState("")
   const [email, setEmail] = React.useState("")
@@ -90,6 +92,7 @@ export function EmployeeDetailSheet({
     setEditing(false)
     setConfirmDeactivate(false)
     setDeactivateReason("")
+    setWorkLocation(employee.workLocation ?? null)
     setName(employee.name || "")
     setEmail(employee.email || "")
     setPhone(employee.phone || "")
@@ -414,6 +417,27 @@ export function EmployeeDetailSheet({
                   </div>
                 )}
               </div>
+
+              {!editing && (
+                <div className="mt-5">
+                  <div className="rounded-2xl border border-surface-variant/20 bg-surface-container-lowest p-5">
+                    <div className="mb-4">
+                      <h4 className="font-headline text-base font-bold text-on-surface">
+                        Lokasi Kerja
+                      </h4>
+                      <p className="mt-1 text-sm text-on-surface-variant">
+                        Atur lokasi absensi khusus untuk karyawan lapangan.
+                        Jika kosong, karyawan menggunakan lokasi default kantor.
+                      </p>
+                    </div>
+                    <WorkLocationEditor
+                      employeeId={employee.id}
+                      currentLocation={workLocation}
+                      onUpdated={setWorkLocation}
+                    />
+                  </div>
+                </div>
+              )}
 
               {!editing && (
                 <div className="mt-5">

@@ -1,0 +1,121 @@
+"use client"
+
+import { useState, useEffect, useRef } from "react"
+import { Search, Loader2, MapPin } from "lucide-react"
+
+interface NominatimResult {
+  lat: string
+  lon: string
+  display_name: string
+}
+
+interface AddressSearchProps {
+  onSelect: (lat: number, lng: number, label: string) => void
+  placeholder?: string
+}
+
+export function AddressSearch({
+  onSelect,
+  placeholder = "Cari alamat kantor...",
+}: AddressSearchProps) {
+  const [query, setQuery] = useState("")
+  const [results, setResults] = useState<NominatimResult[]>([])
+  const [loading, setLoading] = useState(false)
+  const [open, setOpen] = useState(false)
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+
+    if (query.trim().length < 3) {
+      setResults([])
+      return
+    }
+
+    debounceRef.current = setTimeout(async () => {
+      setLoading(true)
+      try {
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/search?format=json&limit=5&q=${encodeURIComponent(query)}&countrycodes=id`,
+          { headers: { "Accept-Language": "id" } }
+        )
+        if (res.ok) {
+          const data: NominatimResult[] = await res.json()
+          setResults(data)
+          setOpen(true)
+        }
+      } catch {
+        setResults([])
+      } finally {
+        setLoading(false)
+      }
+    }, 1000)
+
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current)
+    }
+  }, [query])
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
+
+  function handleSelect(result: NominatimResult) {
+    const lat = parseFloat(result.lat)
+    const lng = parseFloat(result.lon)
+    const label = result.display_name.split(",").slice(0, 3).join(", ")
+    setQuery(label)
+    setOpen(false)
+    onSelect(lat, lng, label)
+  }
+
+  return (
+    <div ref={containerRef} className="relative">
+      <div className="relative">
+        <Search
+          size={16}
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none"
+        />
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onFocus={() => results.length > 0 && setOpen(true)}
+          placeholder={placeholder}
+          className="w-full h-11 pl-10 pr-4 rounded-xl border border-surface-variant/30 bg-surface-container-low text-sm font-medium text-on-surface outline-none focus:ring-2 focus:ring-primary/20"
+        />
+        {loading && (
+          <Loader2
+            size={16}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-primary animate-spin"
+          />
+        )}
+      </div>
+
+      {open && results.length > 0 && (
+        <div className="absolute z-50 mt-1 w-full rounded-xl border border-surface-variant/30 bg-popover shadow-lg overflow-hidden max-h-60 overflow-y-auto">
+          {results.map((result, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => handleSelect(result)}
+              className="flex items-start gap-2 w-full px-4 py-2.5 text-left text-sm hover:bg-surface-container-low transition-colors border-b border-surface-variant/10 last:border-0"
+            >
+              <MapPin size={14} className="mt-0.5 shrink-0 text-primary" />
+              <span className="text-on-surface-variant">
+                {result.display_name}
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}

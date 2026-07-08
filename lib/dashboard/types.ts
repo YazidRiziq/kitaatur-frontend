@@ -1,3 +1,5 @@
+import type { GeoLocation } from "@/lib/settings/types"
+
 export interface DashboardData {
   user: {
     id: string
@@ -9,5 +11,6 @@ export interface DashboardData {
     id: string
     name: string
     timezone: string
+    defaultLocation: GeoLocation | null
   }
 }

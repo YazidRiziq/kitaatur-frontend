@@ -1,3 +1,9 @@
+import type { GeoLocation } from "@/lib/settings/types"
+
+export interface WorkLocation extends GeoLocation {
+  label: string
+}
+
 export interface Employee {
   id: string
   name: string
@@ -14,6 +20,7 @@ export interface Employee {
   }
   avatar_url: string | null
   joined_at: string
+  workLocation: WorkLocation | null
 }
 
 export interface PendingInvitation {
@@ -104,6 +111,21 @@ export interface RevokeInvitationResponse {
     id: string
     name: string
     email: string
+  }
+}
+
+export interface UpdateWorkLocationInput {
+  lat: number
+  lng: number
+  radiusMeters: number
+  label: string
+}
+
+export interface UpdateWorkLocationResponse {
+  message: string
+  data: {
+    id: string
+    workLocation: WorkLocation | null
   }
 }
 

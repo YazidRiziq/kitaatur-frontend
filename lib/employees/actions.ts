@@ -14,6 +14,8 @@ import type {
   PendingInvitation,
   EmployeeFilters,
   PaginatedResponse,
+  UpdateWorkLocationInput,
+  UpdateWorkLocationResponse,
 } from "@/lib/employees/types"
 
 async function getAccessToken(): Promise<string> {
@@ -194,4 +196,33 @@ export async function deactivateEmployee(
   }
 
   return response.json()
+}
+
+export async function updateEmployeeWorkLocation(
+  id: string,
+  input: UpdateWorkLocationInput | null
+): Promise<UpdateWorkLocationResponse> {
+  const token = await getAccessToken()
+
+  const response = await fetch(apiUrl(`/employees/${id}/work-location`), {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(input),
+  })
+
+  if (!response.ok) {
+    const body = await response.json().catch(() => null)
+    throw new Error(body?.message || "Gagal memperbarui lokasi kerja karyawan")
+  }
+
+  return response.json()
+}
+
+export async function resetEmployeeWorkLocation(
+  id: string
+): Promise<UpdateWorkLocationResponse> {
+  return updateEmployeeWorkLocation(id, null)
 }

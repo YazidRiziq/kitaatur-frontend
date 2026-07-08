@@ -1,4 +1,22 @@
 <!--
+=== Sync Impact Report (v1.0.1 → v1.1.0) ===
+Version change: 1.0.1 → 1.1.0
+Modified principles: Principle III (Shadcn + Tailwind v4 Material-3 Design Tokens) — added Leaflet exception
+Added sections: none
+Removed sections: none
+Templates requiring updates:
+  - .specify/templates/plan-template.md      ✅ no change (generic Constitution Check ref)
+  - .specify/templates/spec-template.md      ✅ no change (generic)
+  - .specify/templates/tasks-template.md      ✅ no change (tests already optional)
+  - .specify/templates/checklist-template.md ✅ no change (generic)
+  - .specify/templates/commands/*            ⚠ N/A (directory does not exist)
+Feature: Attendance Geofencing (lokasi absensi)
+  - New deps: leaflet@^1.9.4, react-leaflet@^5.0.0, @types/leaflet@^1.9.21 (dev)
+  - New feature slice: lib/settings/ (types.ts, actions.ts), components/settings/
+  - New route: app/(dashboard)/settings/
+  - Extended types: DashboardData.company.defaultLocation, Employee.workLocation,
+    AttendanceRecord.locationStatus + locationLabel
+===
 === Sync Impact Report (v1.0.0 → v1.0.1) ===
 Version change: 1.0.0 → 1.0.1
 Modified principles: none (PATCH — TODO resolution only)
@@ -66,6 +84,7 @@ Styling MUST use the shadcn/ui primitive layer and the Material Design 3 token s
 - Custom styling MUST consume Tailwind v4 tokens from the `@theme inline` block of `app/globals.css` (e.g. `bg-surface`, `text-on-surface`, `text-on-surface-variant`, `bg-primary`, `border-outline-variant`, `bg-surface-container-lowest/low/high/highest`). Inline hex values in components are DISCOURAGED except for one-off decorative accents.
 - The `cn` helper from `@/lib/utils` (`twMerge(clsx(...))`) MUST be used wherever conditional class merging is needed. `class-variance-authority` (CVA) is reserved for variant-heavy primitives (currently `button` and `SidebarItem`); ad-hoc variant maps (e.g. `LeaveStatCard` `colorMap`) are acceptable for leaf presentational components.
 - Icons MUST be named imports from `lucide-react` rendered as `<Icon size={n} />` (component reference, not string). `lucide-react` is the sole icon library.
+- **Map visualization exception**: interactive maps use `react-leaflet@^5` + `leaflet@^1.9` with OpenStreetMap tiles (no API key). Map components MUST be client-side via `next.dynamic(..., { ssr: false })` and import `leaflet/dist/leaflet.css` scoped to the map component (not globals.css). This is the ONLY sanctioned non-shadcn UI dependency, justified because geofence visualization cannot be built from shadcn primitives.
 - Toasts MUST use `sonner` (`toast.success`/`error`/`info`). The `<ToasterWrapper />` is mounted exactly once in the root layout.
 - Typography: `Plus_Jakarta_Sans` is wired to the `--font-headline` variable (used via the `font-headline` utility for headings/titles); `Inter` is wired to `--font-body` (used via `font-body` for body text). `font-headline` is the canonical heading class for custom (non-shadcn) components.
 
@@ -100,7 +119,7 @@ All code MUST pass `tsconfig.json` (`"strict": true`) and follow the established
 - **Framework**: Next.js `16.2.1` App Router. Per `AGENTS.md`, this is NOT the standard Next.js — APIs, conventions, and file structure may differ from prior knowledge. Before writing Next.js code, consult the guides in `node_modules/next/dist/docs/` and heed deprecation notices.
 - **Language & types**: TypeScript 5 (`"strict": true`), React `19.2.4`.
 - **Styling**: Tailwind CSS v4 (`@import "tailwindcss"`), `tw-animate-css`, shadcn `radix-nova` style, `class-variance-authority`, `clsx` + `tailwind-merge` (via `@/lib/utils` `cn`).
-- **Component primitives**: shadcn (`^4.1.1`) backed by the unified `radix-ui` (`^1.4.3`) package — NOT scoped `@radix-ui/react-*` packages. Icons: `lucide-react` (`^1.7.0`). Toasts: `sonner` (`^2.0.7`).
+- **Component primitives**: shadcn (`^4.1.1`) backed by the unified `radix-ui` (`^1.4.3`) package — NOT scoped `@radix-ui/react-*` packages. Icons: `lucide-react` (`^1.7.0`). Toasts: `sonner` (`^2.0.7`). Maps (geofencing only): `react-leaflet` (`^5.0.0`) + `leaflet` (`^1.9.4`).
 - **Auth**: `@supabase/ssr` (`^0.12.0`) + `@supabase/supabase-js` (`^2.108.1`). Supabase is used for authentication and session-token issuance ONLY; the frontend performs no Supabase database queries.
 - **Data source**: All business data flows through the NestJS REST API at `NEXT_PUBLIC_API_URL`, called from Server Actions with a Bearer token obtained from the Supabase session.
 - **Product context**: KitaAtur is a multi-tenant HRIS SaaS for Indonesian SMEs. The web dashboard serves Owner and HR roles only; employees interact via WhatsApp Bot (out of scope for this frontend). UI copy, toast messages, and Server Action error messages MUST be in Bahasa Indonesia.
@@ -138,4 +157,4 @@ This constitution is the highest-authority document for the KitaAtur frontend. I
 - Complexity or deviation introduced in a plan MUST be justified in the plan's Complexity Tracking table; if no simpler alternative exists, document why.
 - Runtime development guidance lives in `AGENTS.md` (Next.js caveats), `docs/FRONTEND_STRUCTURE.md` (layout/sidebar/topbar contract), and `docs/KitaAtur_PRD.md` (product requirements).
 
-**Version**: 1.0.1 | **Ratified**: 2026-07-08 | **Last Amended**: 2026-07-08
+**Version**: 1.1.0 | **Ratified**: 2026-07-08 | **Last Amended**: 2026-07-08
