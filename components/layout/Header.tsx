@@ -1,7 +1,7 @@
-"use client";
+"use client"
 
-import Image from "next/image";
-import { Bell, Settings } from "lucide-react";
+import Image from "next/image"
+import { Bell, Settings } from "lucide-react"
 
 interface HeaderProps {
   userName?: string
@@ -47,5 +47,5 @@ export function Header({ userName, userRole, userAvatarUrl }: HeaderProps) {
         </div>
       </div>
     </header>
-  );
+  )
 }

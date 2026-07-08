@@ -1,9 +1,8 @@
 <!--
-=== Sync Impact Report ===
-Version change: (template, no prior ratification) → 1.0.0
-Modified principles: N/A — initial ratification (5 placeholders → 5 concrete principles)
-Added sections: Core Principles (5), Technology Stack & Constraints,
-                 Development Workflow & Quality Gates, Governance
+=== Sync Impact Report (v1.0.0 → v1.0.1) ===
+Version change: 1.0.0 → 1.0.1
+Modified principles: none (PATCH — TODO resolution only)
+Added sections: none
 Removed sections: none
 Templates requiring updates:
   - .specify/templates/plan-template.md      ✅ no change (generic Constitution Check ref)
@@ -11,13 +10,23 @@ Templates requiring updates:
   - .specify/templates/tasks-template.md      ✅ no change (tests already optional)
   - .specify/templates/checklist-template.md ✅ no change (generic)
   - .specify/templates/commands/*            ⚠ N/A (directory does not exist)
-Follow-up TODOs (deferred, non-blocking):
-  - TODO(semicolons): consolidate components/layout/* & components/employees/* to no-semicolon
-  - TODO(font): reconcile font-heading (shadcn→Inter) vs font-headline (Plus Jakarta) tokens
-  - TODO(sheets): migrate EmployeeDetailSheet/LeaveDetailSheet to reuse components/ui/sheet
-  - TODO(sidebar): SidebarItem active state MUST use startsWith, not exact === match
-  - Optional: add loading.tsx/error.tsx if per-page skeleton/spinner becomes unwieldy
-===========================
+Follow-up TODOs status:
+  - TODO(semicolons):     ✅ RESOLVED — components/layout/{Header,SidebarItem,Sidebar}.tsx &
+                                       components/employees/EmployeeDetailSheet.tsx converted to no-semicolon
+  - TODO(font):           ✅ RESOLVED — app/globals.css: --font-heading now → var(--font-headline) (Plus Jakarta);
+                                       --font-sans now → var(--font-body) (Inter); shadcn CardTitle/SheetTitle/DialogTitle aligned
+  - TODO(sheets):         ✅ RESOLVED — added components/ui/dialog.tsx (shadcn); EmployeeDetailSheet &
+                                       LeaveDetailSheet migrated from manual DialogPrimitive to ui/dialog primitives
+  - TODO(sidebar):        ✅ RESOLVED — Sidebar.tsx active state now uses pathname.startsWith(item.href + "/")
+  - Optional:             ⏸ DEFERRED — loading.tsx/error.tsx (per-page skeleton still adequate)
+===
+=== Original Sync Impact Report (v1.0.0 → initial ratification) ===
+Version change: (template, no prior ratification) → 1.0.0
+Modified principles: N/A — initial ratification (5 placeholders → 5 concrete principles)
+Added sections: Core Principles (5), Technology Stack & Constraints,
+                 Development Workflow & Quality Gates, Governance
+Removed sections: none
+============================
 -->
 
 # KitaAtur Frontend Constitution
@@ -129,4 +138,4 @@ This constitution is the highest-authority document for the KitaAtur frontend. I
 - Complexity or deviation introduced in a plan MUST be justified in the plan's Complexity Tracking table; if no simpler alternative exists, document why.
 - Runtime development guidance lives in `AGENTS.md` (Next.js caveats), `docs/FRONTEND_STRUCTURE.md` (layout/sidebar/topbar contract), and `docs/KitaAtur_PRD.md` (product requirements).
 
-**Version**: 1.0.0 | **Ratified**: 2026-07-08 | **Last Amended**: 2026-07-08
+**Version**: 1.0.1 | **Ratified**: 2026-07-08 | **Last Amended**: 2026-07-08

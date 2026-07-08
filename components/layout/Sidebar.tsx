@@ -1,8 +1,8 @@
-"use client";
+"use client"
 
-import Image from "next/image";
-import { usePathname } from "next/navigation";
-import { SidebarItem } from "@/components/layout/SidebarItem";
+import Image from "next/image"
+import { usePathname } from "next/navigation"
+import { SidebarItem } from "@/components/layout/SidebarItem"
 import {
   Users,
   UserPlus,
@@ -12,11 +12,11 @@ import {
   Briefcase,
   MessageCircleQuestionMark,
   LogOut,
-} from "lucide-react";
-import { signOutAction } from "@/lib/auth/actions";
+} from "lucide-react"
+import { signOutAction } from "@/lib/auth/actions"
 
 export function Sidebar() {
-  const pathname = usePathname();
+  const pathname = usePathname()
 
   const navItems = [
     { name: "Overview", href: "/overview", icon: LayoutDashboard },
@@ -25,7 +25,7 @@ export function Sidebar() {
     { name: "Pengajuan Cuti", href: "/leave", icon: Users },
     { name: "Departemen", href: "/departments", icon: FolderTree },
     { name: "Jabatan", href: "/positions", icon: Briefcase },
-  ];
+  ]
 
   return (
     <aside className="w-64 border-r-0 fixed left-0 top-0 bg-white dark:bg-slate-900 shadow-[12px_0_40px_rgba(0,105,72,0.06)] flex flex-col h-full py-6 px-4 z-50">
@@ -55,24 +55,28 @@ export function Sidebar() {
             href={item.href}
             icon={item.icon}
             label={item.name}
-            variant={pathname === item.href ? "active" : "default"}
+            variant={
+              pathname === item.href || pathname.startsWith(item.href + "/")
+                ? "active"
+                : "default"
+            }
           />
         ))}
       </nav>
 
       <div className="pt-6 border-t border-slate-100 dark:border-slate-800 space-y-2">
-        <SidebarItem 
-          href="/support" 
-          icon={MessageCircleQuestionMark} 
-          label="Support" 
+        <SidebarItem
+          href="/support"
+          icon={MessageCircleQuestionMark}
+          label="Support"
         />
-        <SidebarItem 
-          icon={LogOut} 
-          label="Sign Out" 
+        <SidebarItem
+          icon={LogOut}
+          label="Sign Out"
           variant="danger"
-          onClick={async () => { await signOutAction() }} 
+          onClick={async () => { await signOutAction() }}
         />
       </div>
     </aside>
-  );
+  )
 }

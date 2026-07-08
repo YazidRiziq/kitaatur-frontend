@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Image from "next/image"
-import { Dialog as DialogPrimitive } from "radix-ui"
+import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogClose } from "@/components/ui/dialog"
 import { Check, Loader2, X } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
@@ -158,22 +158,19 @@ export function LeaveDetailSheet({
   }
 
   return (
-    <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
-      <DialogPrimitive.Portal>
-        <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/20 backdrop-blur-sm duration-100 data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0" />
-
-        <DialogPrimitive.Content className="fixed left-1/2 top-1/2 z-50 flex max-h-[90vh] w-[calc(100%-2rem)] max-w-2xl -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-3xl border border-surface-variant/20 bg-popover text-popover-foreground shadow-2xl outline-none duration-200 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent showCloseButton={false} className="flex max-h-[90vh] max-w-2xl sm:max-w-2xl flex-col overflow-hidden rounded-3xl border border-surface-variant/20 shadow-2xl p-0 gap-0">
           <div className="flex items-start justify-between gap-4 border-b border-surface-variant/20 p-6">
             <div>
-              <DialogPrimitive.Title className="font-headline text-xl font-bold text-on-surface">
+              <DialogTitle className="font-headline text-xl font-bold text-on-surface">
                 Detail Pengajuan Cuti
-              </DialogPrimitive.Title>
-              <DialogPrimitive.Description className="mt-1 text-sm text-on-surface-variant">
+              </DialogTitle>
+              <DialogDescription className="mt-1 text-sm text-on-surface-variant">
                 Informasi lengkap pengajuan cuti karyawan.
-              </DialogPrimitive.Description>
+              </DialogDescription>
             </div>
 
-            <DialogPrimitive.Close asChild>
+            <DialogClose asChild>
               <button
                 type="button"
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-outline transition-colors hover:bg-surface-container-low hover:text-on-surface"
@@ -181,7 +178,7 @@ export function LeaveDetailSheet({
               >
                 <X size={18} />
               </button>
-            </DialogPrimitive.Close>
+            </DialogClose>
           </div>
 
           {!request ? (
@@ -358,8 +355,7 @@ export function LeaveDetailSheet({
               )}
             </div>
           )}
-        </DialogPrimitive.Content>
-      </DialogPrimitive.Portal>
-    </DialogPrimitive.Root>
+        </DialogContent>
+    </Dialog>
   )
 }
