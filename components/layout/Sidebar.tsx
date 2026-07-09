@@ -12,6 +12,7 @@ import {
   Briefcase,
   MessageCircleQuestionMark,
   LogOut,
+  Settings,
 } from "lucide-react"
 import { signOutAction } from "@/lib/auth/actions"
 
@@ -25,6 +26,7 @@ export function Sidebar() {
     { name: "Pengajuan Cuti", href: "/leave", icon: Users },
     { name: "Departemen", href: "/departments", icon: FolderTree },
     { name: "Jabatan", href: "/positions", icon: Briefcase },
+    { name: "Pengaturan", href: "/settings", icon: Settings },
   ]
 
   return (
