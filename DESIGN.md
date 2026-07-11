@@ -1,113 +1,110 @@
 ---
 version: alpha
-name: HashiCorp-design-analysis
-description: "An enterprise-infrastructure marketing canvas built around a near-black ground (#000000) and a system of per-product accent colors — Terraform purple, Vault yellow, Consul pink, Waypoint cyan, Vagrant blue — that act as identity tokens rather than decorative palette. Display type is hashicorpSans set in 600/700 with tight 1.17–1.21 line-heights; body type runs the same family at 500 weight with relaxed 1.50–1.71 line-heights. Cards live as charcoal surfaces with 1px translucent gray borders; product showcase cards lift into per-product chromatic gradients. The system reads as confident, technical, and intentionally multi-product — every section quietly signals which HashiCorp tool it represents."
+name: Supabaze-design-analysis
+description: An inspired interpretation of Supabaze's design language — an open-source database platform built on a clean white-and-near-black system with a single signature emerald-green CTA, a custom humanist sans display tier, and dense product UI mockups composited above the hero. The brand reads as quietly technical: minimal chrome, a near-monochrome palette, and the green primary acting as the only chromatic event on the page.
 
 colors:
-  primary: "#000000"
-  on-primary: "#ffffff"
-  accent-blue: "#2b89ff"
-  ink: "#ffffff"
-  ink-muted: "#b2b6bd"
-  ink-subtle: "#656a76"
-  canvas: "#000000"
-  surface-1: "#15181e"
-  surface-2: "#1f232b"
-  surface-3: "#3b3d45"
-  hairline: "#3b3d45"
-  hairline-soft: "#252830"
-  inverse-canvas: "#ffffff"
-  inverse-ink: "#000000"
-  product-terraform: "#7b42bc"
-  product-terraform-bright: "#911ced"
-  product-vault: "#ffcf25"
-  product-consul: "#e62b1e"
-  product-waypoint: "#14c6cb"
-  product-waypoint-deep: "#12b6bb"
-  product-vagrant: "#1868f2"
-  product-nomad: "#00ca8e"
-  product-boundary: "#f24c53"
-  amber-100: "#fbeabf"
-  amber-200: "#bb5a00"
-  blue-7: "#101a59"
-  semantic-success: "#00ca8e"
-  semantic-warning: "#ffcf25"
-  semantic-error: "#e62b1e"
-  semantic-visited: "#a737ff"
+  primary: "#3ecf8e"
+  primary-deep: "#24b47e"
+  primary-soft: "#4ade80"
+  ink: "#171717"
+  ink-secondary: "#212121"
+  ink-mute: "#707070"
+  ink-mute-2: "#9a9a9a"
+  ink-faint: "#b2b2b2"
+  on-primary: "#171717"
+  on-dark: "#ffffff"
+  canvas: "#ffffff"
+  canvas-soft: "#fafafa"
+  canvas-night: "#1c1c1c"
+  canvas-night-soft: "#202020"
+  hairline: "#dfdfdf"
+  hairline-strong: "#c7c7c7"
+  hairline-cool: "#ededed"
+  hairline-cool-2: "#efefef"
+  hairline-cool-3: "#d4d4d4"
+  accent-purple: "#6b01c2"
+  accent-violet: "#644fc1"
+  accent-purple-soft: "#eddbf9"
+  accent-yellow: "#ffdb13"
+  accent-tomato: "#ff2201"
+  accent-pink: "#c7007e"
+  accent-indigo: "#054cff"
+  accent-crimson: "#e2005a"
 
 typography:
+  display-xxl:
+    fontFamily: "Circular, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+    fontSize: 64px
+    fontWeight: 500
+    lineHeight: 1.1
+    letterSpacing: -1.92px
   display-xl:
-    fontFamily: hashicorpSans
-    fontSize: 80px
-    fontWeight: 700
-    lineHeight: 1.17
-    letterSpacing: -2.5px
+    fontFamily: "Circular, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+    fontSize: 48px
+    fontWeight: 500
+    lineHeight: 1.1
+    letterSpacing: -1.44px
   display-lg:
-    fontFamily: hashicorpSans
-    fontSize: 56px
-    fontWeight: 700
-    lineHeight: 1.18
-    letterSpacing: -1.6px
+    fontFamily: "Circular, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+    fontSize: 36px
+    fontWeight: 500
+    lineHeight: 1.15
+    letterSpacing: -0.72px
   display-md:
-    fontFamily: hashicorpSans
-    fontSize: 40px
-    fontWeight: 600
-    lineHeight: 1.19
-    letterSpacing: -1.0px
-  headline:
-    fontFamily: hashicorpSans
+    fontFamily: "Circular, 'Helvetica Neue', Helvetica, Arial, sans-serif"
     fontSize: 28px
-    fontWeight: 600
-    lineHeight: 1.21
-    letterSpacing: -0.6px
-  card-title:
-    fontFamily: hashicorpSans
+    fontWeight: 500
+    lineHeight: 1.2
+    letterSpacing: -0.42px
+  heading-lg:
+    fontFamily: "Circular, 'Helvetica Neue', Helvetica, Arial, sans-serif"
     fontSize: 22px
-    fontWeight: 600
-    lineHeight: 1.18
-    letterSpacing: -0.4px
-  subhead:
-    fontFamily: hashicorpSans
-    fontSize: 20px
-    fontWeight: 600
-    lineHeight: 1.35
-    letterSpacing: -0.2px
-  body-lg:
-    fontFamily: hashicorpSans
+    fontWeight: 500
+    lineHeight: 1.2
+    letterSpacing: 0
+  heading-md:
+    fontFamily: "Circular, 'Helvetica Neue', Helvetica, Arial, sans-serif"
     fontSize: 18px
     fontWeight: 500
-    lineHeight: 1.69
+    lineHeight: 1.4
     letterSpacing: 0
-  body:
-    fontFamily: hashicorpSans
+  body-lg:
+    fontFamily: "Circular, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+    fontSize: 18px
+    fontWeight: 400
+    lineHeight: 1.55
+    letterSpacing: 0
+  body-md:
+    fontFamily: "Circular, 'Helvetica Neue', Helvetica, Arial, sans-serif"
     fontSize: 16px
-    fontWeight: 500
-    lineHeight: 1.50
+    fontWeight: 400
+    lineHeight: 1.5
     letterSpacing: 0
-  body-sm:
-    fontFamily: hashicorpSans
+  button-md:
+    fontFamily: "Circular, 'Helvetica Neue', Helvetica, Arial, sans-serif"
     fontSize: 14px
     fontWeight: 500
-    lineHeight: 1.71
+    lineHeight: 1.0
     letterSpacing: 0
   caption:
-    fontFamily: hashicorpSans
+    fontFamily: "Circular, 'Helvetica Neue', Helvetica, Arial, sans-serif"
     fontSize: 13px
-    fontWeight: 500
-    lineHeight: 1.38
-    letterSpacing: 0.2px
-  button:
-    fontFamily: hashicorpSans
-    fontSize: 14px
-    fontWeight: 600
-    lineHeight: 1.29
+    fontWeight: 400
+    lineHeight: 1.45
     letterSpacing: 0
-  eyebrow:
-    fontFamily: hashicorpSans
+  micro:
+    fontFamily: "Circular, 'Helvetica Neue', Helvetica, Arial, sans-serif"
     fontSize: 12px
-    fontWeight: 600
-    lineHeight: 1.23
-    letterSpacing: 0.6px
+    fontWeight: 400
+    lineHeight: 1.45
+    letterSpacing: 0
+  code:
+    fontFamily: "ui-monospace, Menlo, Monaco, Consolas, 'Liberation Mono', monospace"
+    fontSize: 14px
+    fontWeight: 400
+    lineHeight: 1.5
+    letterSpacing: 0
 
 rounded:
   xs: 4px
@@ -115,288 +112,227 @@ rounded:
   md: 8px
   lg: 12px
   xl: 16px
-  xxl: 24px
-  pill: 9999px
   full: 9999px
 
 spacing:
-  hair: 1px
-  xxs: 4px
-  xs: 8px
-  sm: 12px
-  md: 16px
-  lg: 24px
-  xl: 32px
-  xxl: 48px
-  section: 96px
+  xxs: 2px
+  xs: 4px
+  sm: 8px
+  md: 12px
+  lg: 16px
+  xl: 24px
+  xxl: 32px
+  huge: 64px
 
 components:
-  button-primary:
-    backgroundColor: "{colors.inverse-canvas}"
-    textColor: "{colors.inverse-ink}"
-    typography: "{typography.button}"
-    rounded: "{rounded.md}"
-    padding: 10px 18px
-  button-primary-pressed:
-    backgroundColor: "{colors.inverse-canvas}"
-    textColor: "{colors.inverse-ink}"
-    typography: "{typography.button}"
-    rounded: "{rounded.md}"
-  button-secondary:
-    backgroundColor: "{colors.surface-2}"
-    textColor: "{colors.ink}"
-    typography: "{typography.button}"
-    rounded: "{rounded.md}"
-    padding: 10px 18px
-  button-tertiary:
+  button-primary-green:
+    backgroundColor: "{colors.primary}"
+    textColor: "{colors.on-primary}"
+    typography: "{typography.button-md}"
+    rounded: "{rounded.sm}"
+    padding: 8px 16px
+  button-primary-green-pressed:
+    backgroundColor: "{colors.primary-deep}"
+    textColor: "{colors.on-primary}"
+    typography: "{typography.button-md}"
+    rounded: "{rounded.sm}"
+    padding: 8px 16px
+  button-secondary-outline:
     backgroundColor: "{colors.canvas}"
     textColor: "{colors.ink}"
-    typography: "{typography.button}"
-    rounded: "{rounded.md}"
-    padding: 10px 18px
-  button-product-terraform:
-    backgroundColor: "{colors.product-terraform}"
+    typography: "{typography.button-md}"
+    rounded: "{rounded.sm}"
+    padding: 8px 16px
+  button-on-dark:
+    backgroundColor: "{colors.canvas-night}"
+    textColor: "{colors.on-dark}"
+    typography: "{typography.button-md}"
+    rounded: "{rounded.sm}"
+    padding: 8px 16px
+  button-link:
+    backgroundColor: "{colors.canvas}"
     textColor: "{colors.ink}"
-    typography: "{typography.button}"
-    rounded: "{rounded.md}"
-    padding: 10px 18px
-  button-product-vault:
-    backgroundColor: "{colors.product-vault}"
-    textColor: "{colors.inverse-ink}"
-    typography: "{typography.button}"
-    rounded: "{rounded.md}"
-    padding: 10px 18px
-  button-product-waypoint:
-    backgroundColor: "{colors.product-waypoint}"
-    textColor: "{colors.inverse-ink}"
-    typography: "{typography.button}"
-    rounded: "{rounded.md}"
-    padding: 10px 18px
-  product-card:
-    backgroundColor: "{colors.surface-1}"
-    textColor: "{colors.ink}"
-    typography: "{typography.body}"
-    rounded: "{rounded.lg}"
-    padding: 24px
-  product-card-terraform:
-    backgroundColor: "{colors.product-terraform}"
-    textColor: "{colors.ink}"
-    typography: "{typography.body}"
-    rounded: "{rounded.lg}"
-    padding: 24px
-  product-card-vault:
-    backgroundColor: "{colors.product-vault}"
-    textColor: "{colors.inverse-ink}"
-    typography: "{typography.body}"
-    rounded: "{rounded.lg}"
-    padding: 24px
-  product-card-waypoint:
-    backgroundColor: "{colors.product-waypoint}"
-    textColor: "{colors.inverse-ink}"
-    typography: "{typography.body}"
-    rounded: "{rounded.lg}"
-    padding: 24px
-  feature-card:
-    backgroundColor: "{colors.surface-1}"
-    textColor: "{colors.ink}"
-    typography: "{typography.body}"
-    rounded: "{rounded.lg}"
-    padding: 24px
-  pricing-card:
-    backgroundColor: "{colors.surface-1}"
-    textColor: "{colors.ink}"
-    typography: "{typography.body}"
-    rounded: "{rounded.lg}"
-    padding: 32px
-  pricing-card-featured:
-    backgroundColor: "{colors.surface-2}"
-    textColor: "{colors.ink}"
-    typography: "{typography.body}"
-    rounded: "{rounded.lg}"
-    padding: 32px
-  resource-card:
-    backgroundColor: "{colors.surface-1}"
-    textColor: "{colors.ink}"
-    typography: "{typography.body-sm}"
-    rounded: "{rounded.lg}"
-    padding: 16px
+    typography: "{typography.button-md}"
+    rounded: "{rounded.xs}"
+    padding: 0px
   text-input:
-    backgroundColor: "{colors.surface-1}"
+    backgroundColor: "{colors.canvas}"
     textColor: "{colors.ink}"
-    typography: "{typography.body}"
-    rounded: "{rounded.md}"
-    padding: 10px 14px
-  text-input-focused:
-    backgroundColor: "{colors.surface-1}"
+    typography: "{typography.body-md}"
+    rounded: "{rounded.sm}"
+    padding: 8px 12px
+  card-feature-light:
+    backgroundColor: "{colors.canvas}"
     textColor: "{colors.ink}"
-    typography: "{typography.body}"
-    rounded: "{rounded.md}"
-    padding: 10px 14px
-  product-pill:
-    backgroundColor: "{colors.surface-1}"
-    textColor: "{colors.ink-muted}"
+    typography: "{typography.body-md}"
+    rounded: "{rounded.lg}"
+    padding: 32px
+  card-pricing:
+    backgroundColor: "{colors.canvas}"
+    textColor: "{colors.ink}"
+    typography: "{typography.body-md}"
+    rounded: "{rounded.lg}"
+    padding: 32px
+  card-pricing-featured:
+    backgroundColor: "{colors.canvas-night}"
+    textColor: "{colors.on-dark}"
+    typography: "{typography.body-md}"
+    rounded: "{rounded.lg}"
+    padding: 32px
+  card-feature-dark:
+    backgroundColor: "{colors.canvas-night}"
+    textColor: "{colors.on-dark}"
+    typography: "{typography.body-md}"
+    rounded: "{rounded.lg}"
+    padding: 32px
+  code-block:
+    backgroundColor: "{colors.canvas-night}"
+    textColor: "{colors.on-dark}"
+    typography: "{typography.code}"
+    rounded: "{rounded.sm}"
+    padding: 16px
+  pill-tag-green:
+    backgroundColor: "{colors.primary}"
+    textColor: "{colors.on-primary}"
+    typography: "{typography.micro}"
+    rounded: "{rounded.full}"
+    padding: 2px 8px
+  pill-tag-soft:
+    backgroundColor: "{colors.canvas-soft}"
+    textColor: "{colors.ink}"
+    typography: "{typography.micro}"
+    rounded: "{rounded.full}"
+    padding: 2px 8px
+  nav-bar-light:
+    backgroundColor: "{colors.canvas}"
+    textColor: "{colors.ink}"
+    typography: "{typography.body-md}"
+    rounded: "{rounded.xs}"
+    padding: 16px 24px
+  link-on-light:
+    backgroundColor: "{colors.canvas}"
+    textColor: "{colors.ink}"
+    typography: "{typography.body-md}"
+    rounded: "{rounded.xs}"
+    padding: 0px
+  footer-light:
+    backgroundColor: "{colors.canvas}"
+    textColor: "{colors.ink-mute}"
     typography: "{typography.caption}"
-    rounded: "{rounded.pill}"
-    padding: 4px 10px
-  top-nav:
-    backgroundColor: "{colors.canvas}"
-    textColor: "{colors.ink}"
-    typography: "{typography.body-sm}"
     rounded: "{rounded.xs}"
-    height: 64px
-  comparison-row:
-    backgroundColor: "{colors.canvas}"
-    textColor: "{colors.ink-muted}"
-    typography: "{typography.body-sm}"
-    rounded: "{rounded.xs}"
-  cta-banner:
-    backgroundColor: "{colors.surface-1}"
-    textColor: "{colors.ink}"
-    typography: "{typography.subhead}"
-    rounded: "{rounded.xxl}"
-    padding: 48px
-  footer:
-    backgroundColor: "{colors.canvas}"
-    textColor: "{colors.ink-muted}"
-    typography: "{typography.caption}"
-    rounded: "{rounded.xs}"
-    padding: 64px 32px
+    padding: 64px 24px
 ---
 
 ## Overview
 
-HashiCorp's marketing canvas is a near-black ground that serves a multi-product portfolio without ever feeling generic. The dominant surface is `{colors.canvas}` (pure black) layered with `{colors.surface-1}` charcoal cards and 1px translucent gray hairlines. The chrome is monochrome — white pill-rounded buttons (`{components.button-primary}`), white type, gray secondary type — but the system is held together by a **palette of per-product accent colors** that signal which HashiCorp tool a given section belongs to: Terraform purple, Vault yellow, Consul red, Waypoint cyan, Vagrant blue, Nomad green, Boundary coral.
+Supabaze's design language is engineered for clarity above all else. The marketing surfaces sit on `{colors.canvas}` (pure white), with text rendered in `{colors.ink}` (`#171717` — near-black, never pure black). Across the entire system the only consistent chromatic event is the **emerald green primary** (`{colors.primary}` — `#3ecf8e`) — used as the filled CTA, occasional accent dot, and the signature highlight color in the wordmark. Everything else is a calibrated grey ladder from `#ededed` hairline-cool to `#171717` ink, with thin black-on-white typography doing most of the visual work.
 
-Display type is **hashicorpSans** at weights 600/700 with tight line-heights (1.17–1.21); body type is the same family at 500 weight with deliberately relaxed line-heights (1.50–1.71) — the contrast feels editorial, not enterprise-templated. CTAs use small `{rounded.md}` 8px corners rather than pills, which keeps the system reading as developer-facing rather than consumer-y.
+Typography runs **Circular** at weight 500 for display and 400 for body. The display tier uses tight negative letter-spacing (-1.92px at 64px) to pull the rounded humanist letterforms into editorial density. There's no atmospheric gradient, no full-bleed photography, no dark-canvas marketing track — the brand commits to white.
 
-The signature device is the **product-card** family — each HashiCorp product gets its own colored card variant on the home and infrastructure pages, lifting Terraform into a violet ground, Vault into yellow, Waypoint into cyan. These aren't decorative gradients — they're identity surfaces. A reader scrolling the page can tell which product a section is about from the corner of their eye.
+The product itself appears as composited UI screenshots on every page: dashboard tables, SQL editors, query builders, log streams. These screenshots are the brand's argument. They sit inside `{rounded.lg}` 12px containers with subtle 1px hairlines, often arranged 2-up or in a floating "stacked panes" composition above the hero band.
 
 **Key Characteristics:**
-- Black-canvas marketing system: `{colors.canvas}` is the surface for hero, body, pricing, comparison tables, and footer alike.
-- **Per-product color identity**: Terraform `{colors.product-terraform}`, Vault `{colors.product-vault}`, Waypoint `{colors.product-waypoint}`, Vagrant `{colors.product-vagrant}`, Consul `{colors.product-consul}`, Nomad `{colors.product-nomad}`, Boundary `{colors.product-boundary}` — each with its own button + card variant.
-- Display headlines run hashicorpSans 600/700 with line-height 1.17–1.21 (tight); body runs the same family at 500 with 1.50–1.71 (relaxed) — the proportional gap is the brand's voice.
-- CTA shape is `{rounded.md}` 8px — not a pill — keeping the system reading as developer-tool rather than consumer-app.
-- Charcoal surface lift (canvas → surface-1 → surface-2) instead of shadow-driven elevation.
-- 1px translucent gray hairlines (`rgba(178,182,189,0.1)`) define cards and dividers — the borders are felt more than seen.
-- Eyebrow typography (12–13px, 600 weight, 0.6px positive tracking, uppercase) marks every section as a category label.
+- Single emerald primary (`{colors.primary}` `#3ecf8e`) as the only chromatic event; everything else is monochrome.
+- White canvas marketing track with greyscale hierarchy from `{colors.hairline-cool}` to `{colors.ink}`.
+- Custom humanist sans display tier at weight 500 with negative letter-spacing of -1.92px to -0.42px.
+- Composited product UI screenshots (dashboard, SQL editor, log stream) are the dominant decorative element — never photography, never illustrations.
+- Tight 6px / 8px button radii — square-ish, technical, never pill-shaped.
+- Code blocks rendered in deep `{colors.canvas-night}` (`#1c1c1c`) with monospace inline code; the brand's developer DNA is visible in every snippet.
+- Pricing tiers use a dark inverted `{colors.canvas-night}` featured tier, not a green one — the green is reserved for buttons and dot accents.
 
 ## Colors
 
-> Source pages: hashicorp.com/en (home), /en/infrastructure-cloud, /en/products/terraform, /en/pricing, /en/resources?contentType=PDF.
+> **Source pages:** home (`/`), `/database`, `/partners/integrations`, `/partners/integrations/powersync`, `/solutions/ai-builders`, `/pricing`.
 
 ### Brand & Accent
-- **Black** ({colors.primary}): The system primary surface. Canvas, footer, comparison tables, hero — all black.
-- **White** ({colors.on-primary}): Inverse text on black; canvas of `button-primary`.
-- **Accent Blue** ({colors.accent-blue}): Hyperlinks across the marketing surface.
-- **Visited Purple** ({colors.semantic-visited}): Visited-link state.
+- **Emerald** (`{colors.primary}` — `#3ecf8e`): The signature CTA color. Filled-button background, brand wordmark accent, dot indicator.
+- **Emerald Deep** (`{colors.primary-deep}` — `#24b47e`): Pressed-state lift of the primary.
+- **Emerald Soft** (`{colors.primary-soft}` — `#4ade80`): Lighter emerald used in chart accents and product UI.
+- **Accent Purple** (`{colors.accent-purple}` — `#6b01c2`): Rare accent used in integration logos and chart points; never a button.
+- **Accent Violet** (`{colors.accent-violet}` — `#644fc1`): Secondary accent in the same role as accent purple.
+- **Accent Yellow** (`{colors.accent-yellow}` — `#ffdb13`): Chart accent / status indicator only.
+- **Accent Pink / Crimson / Indigo / Tomato**: Reserved for integration logos and rare chart highlights, never as system colors.
 
 ### Surface
-- **Canvas** ({colors.canvas}): Default page background.
-- **Surface 1** ({colors.surface-1}): Charcoal one step above canvas — feature cards, pricing cards, resource tiles.
-- **Surface 2** ({colors.surface-2}): Two steps above — featured pricing card, secondary buttons, hovered product chrome.
-- **Surface 3** ({colors.surface-3}): Three steps above — small chips, badges, sub-nav backgrounds.
-- **Hairline** ({colors.hairline}): 1px borders on cards and dividers.
-- **Hairline Soft** ({colors.hairline-soft}): Subtler dividers — comparison-table rows.
-- **Inverse Canvas** ({colors.inverse-canvas}): Pure white — used as the surface of `button-primary` only.
+- **Canvas** (`{colors.canvas}` — `#ffffff`): Default page background.
+- **Canvas Soft** (`{colors.canvas-soft}` — `#fafafa`): Barely-tinted off-white for alternating section bands.
+- **Canvas Night** (`{colors.canvas-night}` — `#1c1c1c`): Deep near-black used in code blocks, dashboard mockups, featured pricing tier.
+- **Canvas Night Soft** (`{colors.canvas-night-soft}` — `#202020`): Slightly lifted dark for nested chrome.
+- **Hairline** (`{colors.hairline}` — `#dfdfdf`): 1px borders on cards and tables.
+- **Hairline Strong** (`{colors.hairline-strong}` — `#c7c7c7`): Slightly darker border for emphasis.
+- **Hairline Cool** (`{colors.hairline-cool}` — `#ededed`) / **Hairline Cool 2** (`#efefef`) / **Hairline Cool 3** (`#d4d4d4`): The brand's grey ladder for fine chrome work.
 
 ### Text
-- **Ink** ({colors.ink}): All headline and emphasized body type — pure white.
-- **Ink Muted** ({colors.ink-muted}): Secondary type at #b2b6bd — meta info, footer columns.
-- **Ink Subtle** ({colors.ink-subtle}): Tertiary type at #656a76 — form helper text, timestamps, footnotes.
-
-### Per-Product Identity (signature)
-HashiCorp's marketing isn't held together by a single accent color — it's held together by a system of product-specific accents, each used to mark which tool a section represents.
-
-- **Terraform Purple** ({colors.product-terraform}): Terraform sections, terraform CTAs, the violet 3D cube on the home hero.
-- **Terraform Bright** ({colors.product-terraform-bright}): Saturated highlight — link emphasis on Terraform pages.
-- **Vault Yellow** ({colors.product-vault}): Vault sections and CTAs.
-- **Consul Red** ({colors.product-consul}): Consul sections.
-- **Waypoint Cyan** ({colors.product-waypoint}): Waypoint sections, deep variant `{colors.product-waypoint-deep}` for hover/active.
-- **Vagrant Blue** ({colors.product-vagrant}): Vagrant sections.
-- **Nomad Green** ({colors.product-nomad}): Nomad sections.
-- **Boundary Coral** ({colors.product-boundary}): Boundary sections.
-
-### Semantic
-- **Success** ({colors.semantic-success}): Positive states (also reused as Nomad green).
-- **Warning** ({colors.semantic-warning}): Warning states (also Vault yellow).
-- **Error** ({colors.semantic-error}): Error states (also Consul red).
-- **Amber 100** ({colors.amber-100}): Soft warm highlight — extracted but used sparingly.
-- **Amber 200** ({colors.amber-200}): Saturated amber for caution badges.
-- **Blue 7** ({colors.blue-7}): Deep navy used in unified-core gradients.
+- **Ink** (`{colors.ink}` — `#171717`): Default body text. Near-black, never pure.
+- **Ink Secondary** (`{colors.ink-secondary}` — `#212121`): Slightly cooler near-black for body emphasis.
+- **Ink Mute** (`{colors.ink-mute}` — `#707070`): Secondary text and helper copy.
+- **Ink Mute 2** (`{colors.ink-mute-2}` — `#9a9a9a`): Tertiary text.
+- **Ink Faint** (`{colors.ink-faint}` — `#b2b2b2`): Disabled / placeholder text.
+- **On Primary** (`{colors.on-primary}` — `#171717`): Text on the emerald primary fill — near-black, not white. The button reads as a "lit" surface with dark type, not a colored chip.
+- **On Dark** (`{colors.on-dark}` — `#ffffff`): Text on canvas-night surfaces.
 
 ## Typography
 
 ### Font Family
 
-- **hashicorpSans** — HashiCorp's proprietary marketing typeface. Geometric, clean, slightly humanist. Fallback stack `__hashicorpSans_Fallback_96f0ca` (system font), then `-apple-system, BlinkMacSystemFont, Segoe UI, helvetica, arial`.
+The display and UI tier is **Circular** — a proprietary geometric humanist sans by Lineto. Fallback chain: `'Helvetica Neue', Helvetica, Arial`.
 
-The same family carries display, body, button, and caption — no separate display + body pairing. Hierarchy is carried by weight (500 body / 600 emphasis / 700 display) and by a deliberate line-height contrast (tight on display, relaxed on body).
+For maximum brand fidelity when Circular isn't licensed, use **Inter** (open-source via Google Fonts) at weight 500 for display with `letter-spacing: -1.92px` at 64px. Inter is the closest open-source analogue to Circular's geometric humanist character.
+
+Code blocks use **system mono** (`ui-monospace`, with Menlo / Monaco / Consolas fallbacks).
 
 ### Hierarchy
 
 | Token | Size | Weight | Line Height | Letter Spacing | Use |
 |---|---|---|---|---|---|
-| `{typography.display-xl}` | 80px | 700 | 1.17 | -2.5px | Largest hero headline |
-| `{typography.display-lg}` | 56px | 700 | 1.18 | -1.6px | Section opener headlines |
-| `{typography.display-md}` | 40px | 600 | 1.19 | -1.0px | Sub-section headlines |
-| `{typography.headline}` | 28px | 600 | 1.21 | -0.6px | Pricing tier titles, CTA banner heading |
-| `{typography.card-title}` | 22px | 600 | 1.18 | -0.4px | Feature card title |
-| `{typography.subhead}` | 20px | 600 | 1.35 | -0.2px | Long-form intro paragraphs |
-| `{typography.body-lg}` | 18px | 500 | 1.69 | 0 | Hero subhead, lead body |
-| `{typography.body}` | 16px | 500 | 1.50 | 0 | Default body |
-| `{typography.body-sm}` | 14px | 500 | 1.71 | 0 | Card body, footer columns |
-| `{typography.caption}` | 13px | 500 | 1.38 | 0.2px | Meta, comparison cell labels |
-| `{typography.button}` | 14px | 600 | 1.29 | 0 | Pill / square CTA buttons |
-| `{typography.eyebrow}` | 12px | 600 | 1.23 | 0.6px | Uppercase section eyebrows |
+| `{typography.display-xxl}` | 64px | 500 | 1.1 | -1.92px | Hero headline |
+| `{typography.display-xl}` | 48px | 500 | 1.1 | -1.44px | Section opener |
+| `{typography.display-lg}` | 36px | 500 | 1.15 | -0.72px | Sub-section / pricing tier |
+| `{typography.display-md}` | 28px | 500 | 1.2 | -0.42px | Card title |
+| `{typography.heading-lg}` | 22px | 500 | 1.2 | 0 | Compact heading |
+| `{typography.heading-md}` | 18px | 500 | 1.4 | 0 | Section sub-heading |
+| `{typography.body-lg}` | 18px | 400 | 1.55 | 0 | Marketing body lead |
+| `{typography.body-md}` | 16px | 400 | 1.5 | 0 | Default UI body |
+| `{typography.button-md}` | 14px | 500 | 1.0 | 0 | Button label |
+| `{typography.caption}` | 13px | 400 | 1.45 | 0 | Helper, footnote |
+| `{typography.micro}` | 12px | 400 | 1.45 | 0 | Pill label, fine print |
+| `{typography.code}` | 14px | 400 | 1.5 | 0 | Code block content |
 
 ### Principles
-
-- **Tight on display, relaxed on body.** Display sits at line-height 1.17–1.21; body lifts to 1.50–1.71. The size + line-height contrast carries hierarchy.
-- **Weight hierarchy is small.** 500 body / 600 emphasis / 700 display. No light / black extremes — the brand reads as engineered.
-- **Eyebrow positive-tracked uppercase 12px is the section header.** Every meaningful section has one above the headline.
-- **No mono.** Despite being a developer-tools brand, the marketing surface uses no monospace face — code voice is reserved for in-product surfaces.
+- **Weight 500 across display.** Mid-weight reads as engineered, not decorative.
+- **Negative tracking on display.** -1.92px at 64px scaling proportionally down — tightens the rounded humanist letterforms into editorial density.
+- **Mono for code.** System mono families (Menlo / Monaco) — no proprietary mono webfont.
 
 ### Note on Font Substitutes
-
-If implementing without hashicorpSans, suitable open-source substitutes include **Inter** (closest geometric character set), **Geist Sans**, or **IBM Plex Sans**. Inter at weights 500 / 600 / 700 closely approximates hashicorpSans's proportions; expect to manually adjust line-heights down by ~0.02 to match.
+Circular is proprietary. Use **Inter** at weight 500 with `letter-spacing: -1.92px` for display tiers. **Geist Sans** (open-source from Vercel) is another close alternative for both display and body. Avoid Helvetica defaults — they're heavier and lack the geometric warmth.
 
 ## Layout
 
 ### Spacing System
-
-- **Base unit**: 8px (the primary increments are 4 / 8 / 12 / 16 / 24 / 32 / 48).
-- **Tokens (front matter)**: `{spacing.hair}` 1px · `{spacing.xxs}` 4px · `{spacing.xs}` 8px · `{spacing.sm}` 12px · `{spacing.md}` 16px · `{spacing.lg}` 24px · `{spacing.xl}` 32px · `{spacing.xxl}` 48px · `{spacing.section}` 96px.
-- Card interior padding: `{spacing.lg}` 24px on product cards; `{spacing.xl}` 32px on pricing cards; `{spacing.xxl}` 48px on CTA banners.
-- Button padding: 10px vertical · 18px horizontal on `{components.button-primary}`.
-- Universal rhythm constant: `{spacing.section}` (96px) vertical gap between major sections.
+- **Base unit**: 8px (with 2 / 4 / 12 sub-tokens for fine work).
+- **Tokens**: `{spacing.xxs}` 2px · `{spacing.xs}` 4px · `{spacing.sm}` 8px · `{spacing.md}` 12px · `{spacing.lg}` 16px · `{spacing.xl}` 24px · `{spacing.xxl}` 32px · `{spacing.huge}` 64px.
+- **Section padding**: 64–96px on marketing surfaces.
+- **Card internal padding**: 32px on feature/pricing cards.
 
 ### Grid & Container
-
-- Max content width sits around 1280px with side gutters scaling from `{spacing.xxl}` on desktop down to `{spacing.lg}` on mobile.
-- Product card grids are 3-up on desktop, 2-up at tablet, 1-up on mobile.
-- Pricing tier grid is 3-up across desktop; comparison table beneath uses fixed-width left column.
-- Resource directory (PDF library) uses 4-up dense thumbnail grid.
+- Marketing pages center in a ~1280px container with no edge-bleed; the brand keeps content inside the box.
+- Pricing collapses 4-up → 2-up → 1-up at 1024 / 768 breakpoints.
+- Product UI mockups stack 2-up or render as overlapping panes inside the same container.
 
 ### Whitespace Philosophy
-
-The dark canvas IS the whitespace. Sections separate by surface lift (canvas → surface-1) rather than by gaps in white. Within a section, generous `{spacing.xl}` 32px gaps separate cards; `{spacing.lg}` 24px separates rows.
+The brand uses generous 64–96px section padding without atmospheric gradients filling the space — the white canvas is the design. The composited product UI mockups break up sections without requiring decoration.
 
 ## Elevation & Depth
 
 | Level | Treatment | Use |
 |---|---|---|
-| 0 (flat) | No shadow, no border | Canvas-mounted display type, hero, footer |
-| 1 (charcoal lift) | `{colors.surface-1}` background + 1px `rgba(178,182,189,0.1)` border | Default cards, resource tiles, pricing cards |
-| 2 (surface-2 lift) | `{colors.surface-2}` background + 1px `{colors.hairline}` border | Featured pricing card, hovered cards, sub-nav |
-| 3 (product chromatic) | Per-product accent color background — Terraform purple, Vault yellow, Waypoint cyan | Product showcase cards |
-
-The product chromatic level isn't a "modal lift" — it's an identity device. A Terraform card sits at the same z-plane as a feature-card; the difference is meaning, not depth.
+| 0 | Flat, 1px hairline | Default cards |
+| 1 | `box-shadow: 0 1px 3px rgba(0,0,0,0.06)` | Subtle card lift |
+| 2 | `box-shadow: 0 8px 24px rgba(0,0,0,0.08)` | Floating composited UI mockups |
+| 3 | `box-shadow: 0 16px 48px rgba(0,0,0,0.12)` | Modal overlays, deep elevation |
 
 ### Decorative Depth
-
-- **3D product visuals** — isometric purple cubes (Terraform), translucent yellow safes (Vault), and similar product-tinted illustrations sit in the right column of hero sections.
-- **1px translucent gray hairlines** are the dominant edge — borders are visible without competing.
-- **No drop shadows on dark.** Cards lift via surface change, never shadow.
+The brand's depth is **product UI mockups** rather than gradients. Stacked dashboard / SQL editor / log panes composite together with subtle Level 2 shadows to suggest spatial hierarchy.
 
 ## Shapes
 
@@ -404,127 +340,94 @@ The product chromatic level isn't a "modal lift" — it's an identity device. A 
 
 | Token | Value | Use |
 |---|---|---|
-| `{rounded.xs}` | 4px | Small chips / badges |
-| `{rounded.sm}` | 6px | Inline tag |
-| `{rounded.md}` | 8px | All CTA buttons, form inputs, list items |
-| `{rounded.lg}` | 12px | Feature cards, product cards, pricing cards |
-| `{rounded.xl}` | 16px | Large illustrative tiles |
-| `{rounded.xxl}` | 24px | CTA banner panels |
-| `{rounded.pill}` | 9999px | Eyebrow-style product pills (small chips) |
-| `{rounded.full}` | 9999px | Avatar circles (rare on marketing) |
+| `{rounded.xs}` | 4px | Form inputs, hairline tags |
+| `{rounded.sm}` | 6px | Buttons (the brand's signature button radius), code blocks |
+| `{rounded.md}` | 8px | Compact cards, alerts |
+| `{rounded.lg}` | 12px | Pricing cards, feature cards, product mockups |
+| `{rounded.xl}` | 16px | Modal dialogs, large container chrome |
+| `{rounded.full}` | 9999px | Pill tags, avatars |
 
-### Photography & Illustration Geometry
-
-- Product 3D illustrations use full-bleed within their container — no rounded inner mask.
-- Logo chips in the customer marquee sit on `{rounded.sm}` 6px tiles with 1px hairline.
-- Resource thumbnails use `{rounded.lg}` 12px corners.
+### Photography Geometry
+The brand uses minimal photography. Customer logo strips display wordmarks at uniform height (~24–32px) in greyscale; case-study cards (rare) use 4:3 photos inset in `{rounded.lg}` containers.
 
 ## Components
 
 ### Buttons
 
-**`button-primary`** — White rounded-rect CTA. Used as primary CTA on all pages.
-- Background `{colors.inverse-canvas}`, text `{colors.inverse-ink}`, type `{typography.button}`, padding 10px 18px, rounded `{rounded.md}`.
-- Pressed state lives in `button-primary-pressed`.
+**`button-primary-green`** — the signature CTA.
+- Background `{colors.primary}`, text `{colors.on-primary}` (near-black, NOT white), type `{typography.button-md}`, padding `{spacing.sm} {spacing.lg}` (8px 16px), rounded `{rounded.sm}` 6px.
+- Pressed state `button-primary-green-pressed` shifts to `{colors.primary-deep}`.
 
-**`button-secondary`** — Charcoal rounded-rect. Secondary CTA, "Read docs" / "Talk to sales".
-- Background `{colors.surface-2}`, text `{colors.ink}`, type `{typography.button}`, rounded `{rounded.md}`, padding 10px 18px.
+**`button-secondary-outline`** — outline alternative on white.
+- Background `{colors.canvas}`, text `{colors.ink}`, 1px solid `{colors.hairline-strong}` border, same shape.
 
-**`button-tertiary`** — Bare ghost button on canvas with text-only treatment.
-- Background `{colors.canvas}`, text `{colors.ink}`, type `{typography.button}`, rounded `{rounded.md}`, padding 10px 18px.
+**`button-on-dark`** — used on dark surfaces / code-block CTAs.
+- Background `{colors.canvas-night}`, text `{colors.on-dark}`, same shape.
 
-**`button-product-terraform`** — Terraform-tinted CTA on Terraform pages.
-- Background `{colors.product-terraform}`, text `{colors.ink}`, type `{typography.button}`, rounded `{rounded.md}`, padding 10px 18px.
-
-**`button-product-vault`** — Vault-yellow CTA.
-- Background `{colors.product-vault}`, text `{colors.inverse-ink}` (yellow needs dark text), type `{typography.button}`, rounded `{rounded.md}`, padding 10px 18px.
-
-**`button-product-waypoint`** — Waypoint-cyan CTA.
-- Background `{colors.product-waypoint}`, text `{colors.inverse-ink}`, type `{typography.button}`, rounded `{rounded.md}`, padding 10px 18px.
-
-(Vagrant blue, Nomad green, Consul red, Boundary coral follow the same pattern with their respective `{colors.product-*}` token.)
+**`button-link`** — text-only inline button.
+- Transparent background, text `{colors.ink}` rendered in `{typography.button-md}`, no padding, with a subtle underline on hover.
 
 ### Cards & Containers
 
-**`product-card`** — Default product showcase card — surface-1 charcoal.
-- Background `{colors.surface-1}`, text `{colors.ink}`, type `{typography.body}`, rounded `{rounded.lg}`, padding 24px.
+**`card-feature-light`** — feature card on white.
+- Background `{colors.canvas}`, padding `{spacing.xxl}`, rounded `{rounded.lg}` 12px, 1px `{colors.hairline}` border.
 
-**`product-card-terraform`** — Product card with Terraform purple ground (used as identity surface, not modal elevation).
-- Background `{colors.product-terraform}`, text `{colors.ink}`, type `{typography.body}`, rounded `{rounded.lg}`, padding 24px.
+**`card-pricing`** — standard pricing tier.
+- Background `{colors.canvas}`, padding `{spacing.xxl}`, rounded `{rounded.lg}`, 1px `{colors.hairline}` border. Title in `{typography.heading-lg}`, price in `{typography.display-md}`, body in `{typography.body-md}`, CTA `button-primary-green` pinned bottom.
 
-**`product-card-vault`** — Vault-yellow ground.
-- Background `{colors.product-vault}`, text `{colors.inverse-ink}`, otherwise identical structure.
+**`card-pricing-featured`** — inverted dark featured tier.
+- Background `{colors.canvas-night}`, text `{colors.on-dark}`, otherwise identical structure.
 
-**`product-card-waypoint`** — Waypoint-cyan ground.
-- Background `{colors.product-waypoint}`, text `{colors.inverse-ink}`, otherwise identical structure.
+**`card-feature-dark`** — feature card with deep dark fill.
+- Background `{colors.canvas-night}`, text `{colors.on-dark}`, padding `{spacing.xxl}`, rounded `{rounded.lg}`. Used for code-heavy feature explanations.
 
-(Other product variants follow the same shape with their respective product token.)
-
-**`feature-card`** — Generic feature highlight on surface-1.
-- Background `{colors.surface-1}`, text `{colors.ink}`, type `{typography.body}`, rounded `{rounded.lg}`, padding 24px.
-
-**`pricing-card`** — Pricing tier on `/en/pricing`.
-- Background `{colors.surface-1}`, text `{colors.ink}`, type `{typography.body}`, rounded `{rounded.lg}`, padding 32px.
-
-**`pricing-card-featured`** — Recommended tier (visually emphasized via surface lift).
-- Background `{colors.surface-2}`, otherwise identical structure.
-
-**`resource-card`** — PDF / whitepaper / guide tile in the resources directory.
-- Background `{colors.surface-1}`, text `{colors.ink}`, type `{typography.body-sm}`, rounded `{rounded.lg}`, padding 16px.
+**`code-block`** — code snippet container.
+- Background `{colors.canvas-night}`, text `{colors.on-dark}` rendered in `{typography.code}`. Padding `{spacing.lg}` 16px, rounded `{rounded.sm}` 6px.
 
 ### Inputs & Forms
 
-**`text-input`** + **`text-input-focused`** — Form fields on pricing seat-count and contact forms.
-- Background `{colors.surface-1}`, text `{colors.ink}`, type `{typography.body}`, rounded `{rounded.md}`, padding 10px 14px.
-- Focused state retains the same surface; the focus ring is a 1px `{colors.accent-blue}` outline.
-
-### Pills & Chips
-
-**`product-pill`** — Small product-name chip used above hero headlines and on resource cards to label which product a piece of content belongs to.
-- Background `{colors.surface-1}`, text `{colors.ink-muted}`, type `{typography.caption}`, rounded `{rounded.pill}`, padding 4px 10px.
-
-### Comparison Table
-
-**`comparison-row`** — Single row inside the pricing comparison table.
-- Background `{colors.canvas}`, text `{colors.ink-muted}`, type `{typography.body-sm}`. Row separator is `{colors.hairline-soft}`.
-
-### CTA Banner
-
-**`cta-banner`** — Large rounded panel used at the bottom of long-form pages with a closing CTA.
-- Background `{colors.surface-1}`, text `{colors.ink}`, type `{typography.subhead}`, rounded `{rounded.xxl}`, padding 48px.
+**`text-input`** — standard form input.
+- Background `{colors.canvas}`, text `{colors.ink}`, type `{typography.body-md}`, padding `{spacing.sm} {spacing.md}` (8px 12px), rounded `{rounded.sm}` 6px, 1px `{colors.hairline}` border.
 
 ### Navigation
 
-**`top-nav`** — Sticky black bar with HashiCorp logomark left, primary nav links centered, and a `button-primary` ("Sign up") + `button-secondary` ("Sign in") pair right.
-- Background `{colors.canvas}`, text `{colors.ink}`, type `{typography.body-sm}`, height 64px.
-- Mobile: collapses primary links into a hamburger; the primary CTA remains visible.
+**`nav-bar-light`** — top nav across the site.
+- Background `{colors.canvas}`, text `{colors.ink}`, padding `{spacing.lg} {spacing.xl}`. Logo on the left, primary nav center, "Sign In" link + filled `button-primary-green` on the right.
 
-### Footer
+### Pills, Tags, and Chips
 
-**`footer`** — Dense link grid on `{colors.canvas}` with the wordmark at left and 5–6 columns of caption-sized links.
-- Background `{colors.canvas}`, text `{colors.ink-muted}`, type `{typography.caption}`, padding 64px 32px.
+**`pill-tag-green`** — small green pill used for "new" or featured indicators.
+- Background `{colors.primary}`, text `{colors.on-primary}`, type `{typography.micro}`, padding `{spacing.xxs} {spacing.sm}`, rounded `{rounded.full}`.
+
+**`pill-tag-soft`** — neutral pill on light surfaces.
+- Background `{colors.canvas-soft}`, text `{colors.ink}`, otherwise same shape.
+
+### Signature Components
+
+**Composited Product UI Mockups** — multi-layer dashboard / SQL editor / log pane composites with subtle Level 2 shadows. The product is the brand's argument; mockups always sit on white canvas with no surrounding decoration.
+
+**`link-on-light`** — inline links in body copy.
+- Text `{colors.ink}` rendered in `{typography.body-md}` with a persistent underline.
+
+**`footer-light`** — site-wide footer.
+- Background `{colors.canvas}`, text `{colors.ink-mute}`, type `{typography.caption}`, padding `{spacing.huge} {spacing.xl}` (64px 24px). Holds 4–5 columns of link groups, social icons, and a small legal row.
 
 ## Do's and Don'ts
 
 ### Do
-
-- Reserve `{colors.canvas}` (black) and `{colors.surface-1}` (charcoal) as the system's two anchor surfaces. Every band of the page is one or the other.
-- When introducing a section about a specific HashiCorp product, use that product's `{colors.product-*}` token consistently — for the section pill, the CTA button, and (where appropriate) the showcase card background.
-- Use `{rounded.md}` 8px on CTA buttons; HashiCorp's brand reads as engineered, not consumer.
-- Pair tight display line-heights (1.17–1.21) with relaxed body line-heights (1.50–1.71). The contrast IS the brand voice.
-- Use the eyebrow typography (`{typography.eyebrow}`, uppercase, 0.6px tracking) above every meaningful section.
-- Use surface lift (canvas → surface-1 → surface-2) to express hierarchy on dark.
-- Reserve product-chromatic cards for product identity; keep generic feature cards on `{colors.surface-1}`.
+- Reserve `{colors.primary}` emerald for filled CTAs and the wordmark accent — it should appear sparingly.
+- Render display tiers at weight 500 with negative letter-spacing — the engineered tightness is part of the brand.
+- Use `{rounded.sm}` 6px for buttons — square-ish radii, never pill-shaped.
+- Composite product UI mockups inside `{rounded.lg}` containers with subtle Level 2 shadows.
+- Use near-black `{colors.ink}` on the emerald button (not white) — the green reads as "lit" with dark type, which is the brand's idiosyncratic choice.
+- Apply system mono for every code block.
 
 ### Don't
-
-- Don't ship a light-mode marketing page. HashiCorp's marketing brand IS dark.
-- Don't introduce mid-tone gray text outside the documented `ink` / `ink-muted` / `ink-subtle` set.
-- Don't square off CTA corners — use `{rounded.md}` 8px, not 0px.
-- Don't use a product accent color for a CTA on a page that isn't about that product. Terraform purple on the Vault page is a brand violation.
-- Don't combine multiple product accents in the same viewport — the system says "this section is about THIS tool", and mixing accents breaks that signal.
-- Don't add drop shadows on dark; surface lift carries elevation.
-- Don't replace `hashicorpSans` with a display-only sans for headlines and a different family for body. The brand is held together by one family across the full hierarchy.
+- Don't introduce additional accent colors as system colors — purples, yellows, and pinks belong inside chart points and integration logos only.
+- Don't bump display weight above 500 — the brand's calibrated mid-weight breaks at 600+.
+- Don't use pill-shaped buttons; the brand's button radius is square-ish 6px.
+- Don't use white text on the emerald button — the brand specifically uses near-black on green.
+- Don't add atmospheric gradients to hero bands — the white canvas is the design.
 
 ## Responsive Behavior
 
@@ -532,44 +435,28 @@ The product chromatic level isn't a "modal lift" — it's an identity device. A 
 
 | Name | Width | Key Changes |
 |---|---|---|
-| Desktop-XL | 1440px | Default desktop layout |
-| Desktop | 1280px | Pricing 3-up grid maintained |
-| Tablet | 1024px | Product card grid 3-up → 2-up |
-| Mobile-Lg | 768px | Pricing comparison becomes per-tier accordion; nav becomes hamburger |
-| Mobile | 480px | Single-column everything; display-xl scales 80px → ~36px |
+| Wide | ≥ 1440px | Full container width; product mockups at full scale |
+| Desktop | 1024–1440px | Default content max-width; pricing 4-up |
+| Tablet | 768–1023px | Pricing 2-up; mockups simplify to single panel |
+| Mobile | < 768px | Pricing 1-up; hamburger nav; display drops 64 → 36px |
 
 ### Touch Targets
-
-- CTA buttons (`button-primary`, `button-secondary`) maintain ≥40px tap height across viewports.
-- Product pills are 24px tall on desktop and grow to 28px on touch viewports.
-- Form inputs hold ≥44px tap target on touch viewports.
+- Buttons hit ≥ 36×36px on mobile; vertical padding scales up to maintain WCAG AA minimum.
+- Form fields stay at 36px minimum height.
 
 ### Collapsing Strategy
-
-- **Nav**: horizontal nav with right-anchored CTAs collapses to a hamburger overlay below 768px. The primary CTA stays visible on the bar.
-- **Product card grid**: 3-up → 2-up at 1024px → 1-up below 768px.
-- **Pricing comparison table**: collapses into per-tier accordions below 768px to avoid horizontal scroll.
-- **Display type**: `{typography.display-xl}` 80px scales toward `{typography.display-md}` 40px on mobile while preserving the negative-tracking percentage.
+- Display tiers stair-step 64 → 48 → 36 → 28 → 22px.
+- Product UI mockups simplify to a single primary panel on mobile.
+- Pricing tiers stair-step 4-up → 2-up → 1-up; dark featured tier always distinguished.
 
 ### Image Behavior
-
-- 3D product illustrations (cubes, safes, etc.) maintain aspect ratio and never crop; below 768px they shrink rather than reflow.
-- Customer logo marquee scales horizontally and may wrap to a second row at narrow widths.
+Product UI mockups use `srcset` with desktop / mobile crops; mobile crops focus on the most actionable inner panel.
 
 ## Iteration Guide
 
-1. Focus on ONE component at a time and reference it by its `components:` token name.
-2. When introducing a new section, decide first whether it's a generic feature (surface-1) or a product-identity section (product-* color).
-3. Default body to `{typography.body}` at 500 weight; reach for `{typography.subhead}` only inside CTA banners and feature cards.
-4. Run `npx @google/design.md lint DESIGN.md` after edits.
-5. Add new product variants as separate component entries (`product-card-nomad`, `button-product-consul`, etc.).
-6. Treat the per-product palette as identity tokens, not decoration. If you reach for a product color outside its product context, the brand is drifting.
-7. Eyebrow type is mandatory above every section — skipping it makes sections read as floating.
-
-## Known Gaps
-
-- The exact product-color hex values come from the `--mds-color-*` CSS variable set extracted directly; they are HashiCorp's canonical brand spec.
-- Shadow tokens are not extensively documented because the dark surface system uses surface lift instead of shadow elevation.
-- Form-field error and validation styling is not visible on the inspected pages.
-- Dark mode is the only marketing mode — light-mode adaptation is not documented.
-- Product-card variants for Consul, Nomad, Vagrant, and Boundary follow the documented Terraform / Vault / Waypoint pattern but are referenced in prose only; if they need formal entries they can be added as `product-card-consul`, `product-card-nomad`, etc.
+1. Focus on ONE component at a time.
+2. Reference component names and tokens directly.
+3. Run `npx @google/design.md lint DESIGN.md` after edits.
+4. Default body to `{typography.body-md}`; use `{typography.code}` for any developer-facing snippet.
+5. Keep emerald scarce; one filled green button per viewport.
+6. The white-canvas commitment is non-negotiable — adding atmospheric backdrops breaks the brand.
