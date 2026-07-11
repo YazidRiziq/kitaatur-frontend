@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Inter } from "next/font/google";
 import { ToasterWrapper } from "@/components/layout/ToasterWrapper";
+import { TooltipWrapper } from "@/components/layout/TooltipWrapper";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-body" });
 
@@ -21,7 +22,9 @@ export default function RootLayout({
         suppressHydrationWarning
         className={`min-h-screen bg-surface font-body text-on-surface overflow-x-hidden antialiased ${inter.variable}`}
       >
-        {children}
+        <TooltipWrapper>
+          {children}
+        </TooltipWrapper>
         <ToasterWrapper />
       </body>
     </html>

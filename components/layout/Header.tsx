@@ -1,7 +1,18 @@
 "use client"
 
-import Image from "next/image"
-import { Bell, Settings } from "lucide-react"
+import Link from "next/link"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { SidebarTrigger } from "@/components/ui/sidebar"
+import { SettingsIcon, LogOutIcon, ChevronDownIcon } from "lucide-react"
+import { signOutAction } from "@/lib/auth/actions"
 
 interface HeaderProps {
   userName?: string
@@ -10,42 +21,64 @@ interface HeaderProps {
 }
 
 export function Header({ userName, userRole, userAvatarUrl }: HeaderProps) {
+  const initials = userName
+    ?.split(" ")
+    .map((n) => n[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase()
+
   return (
-    <header className="fixed top-0 z-40 w-full h-15 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl flex items-center justify-end px-8 py-4 shadow-sm dark:shadow-none">
-      <div className="ml-64" />
-      <Bell className="w-8 h-8 p-2 text-slate-500 hover:text-emerald-500 transition-all active:scale-95"/>
-      <Settings className="w-8 h-8 p-2 mr-4 text-slate-500 hover:text-emerald-500 transition-all active:scale-95"/>
-      <div className="flex items-center gap-6">
-        <div className="h-8 w-px bg-slate-200"></div>
-        <div className="flex items-center gap-3">
-          <div className="text-right">
-            <p className="text-sm font-bold font-headline leading-none">
-              {userName}
-            </p>
-            <p className="text-[10px] text-slate-500 font-medium">
-              {userRole}
-            </p>
-          </div>
-          <div className="relative">
-            {userAvatarUrl ? (
-              <Image
-                src={userAvatarUrl}
-                alt="Profile Picture"
-                width={40}
-                height={40}
-                className="rounded-full"
-              />
-            ) : (
-              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                <span className="text-sm font-bold text-primary">
-                  {userName?.charAt(0).toUpperCase() ?? "?"}
+    <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-border bg-background px-4">
+      <SidebarTrigger />
+
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button
+            className="flex items-center gap-2.5 rounded-sm p-1 pr-2 text-sm outline-none transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring"
+            aria-label="Menu akun"
+          >
+            <Avatar size="sm">
+              {userAvatarUrl ? (
+                <AvatarImage src={userAvatarUrl} alt={userName ?? "Avatar"} />
+              ) : null}
+              <AvatarFallback>{initials ?? "?"}</AvatarFallback>
+            </Avatar>
+            <span className="hidden text-left leading-tight sm:block">
+              <span className="block text-sm font-medium text-foreground">
+                {userName}
+              </span>
+              {userRole && (
+                <span className="block text-xs text-muted-foreground">
+                  {userRole}
                 </span>
-              </div>
-            )}
-            <div className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full"></div>
-          </div>
-        </div>
-      </div>
+              )}
+            </span>
+            <ChevronDownIcon className="size-4 text-muted-foreground" />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-56">
+          <DropdownMenuLabel>{userName}</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <Link href="/settings">
+              <SettingsIcon />
+              <span>Pengaturan</span>
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            variant="destructive"
+            onSelect={(e) => {
+              e.preventDefault()
+              signOutAction()
+            }}
+          >
+            <LogOutIcon />
+            <span>Keluar</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </header>
   )
 }
