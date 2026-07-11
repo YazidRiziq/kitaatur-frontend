@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { LoginForm } from "@/components/auth/LoginForm"
-import { LoginBrandPanel } from "@/components/auth/LoginBrandPanel"
+import { AuthBrandPanel } from "@/components/auth/AuthBrandPanel"
 
 export const metadata: Metadata = {
   title: "Masuk — KitaAtur HRIS",
@@ -10,7 +10,10 @@ export const metadata: Metadata = {
 export default function LoginPage() {
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
-      <LoginBrandPanel />
+      <AuthBrandPanel
+        headline="Absensi, cuti, dan tim Anda — dalam satu dashboard."
+        subtext="Absensi via WhatsApp tervalidasi lewat geofencing, cuti tercatat rapi, dan data karyawan terpusat. Tanpa spreadsheet, tanpa rumus manual."
+      />
 
       <main className="flex flex-col items-center justify-center px-6 py-12">
         <div className="w-full max-w-sm">

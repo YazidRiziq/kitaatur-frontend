@@ -16,7 +16,13 @@ const avatarTone: Record<string, string> = {
   tomato: "bg-accent-tomato/20 text-accent-tomato",
 }
 
-export function LoginBrandPanel() {
+export function AuthBrandPanel({
+  headline,
+  subtext,
+}: {
+  headline: string
+  subtext: string
+}) {
   return (
     <aside className="relative hidden lg:flex flex-col justify-between bg-canvas-night text-on-dark px-12 py-12 xl:px-16">
       <header className="flex items-center gap-2">
@@ -26,12 +32,10 @@ export function LoginBrandPanel() {
 
       <div className="max-w-md">
         <h2 className="text-[2.25rem] leading-[1.15] font-medium tracking-[-0.72px]">
-          Absensi, cuti, dan tim Anda — dalam satu dashboard.
+          {headline}
         </h2>
         <p className="mt-4 text-[15px] leading-relaxed text-ink-mute-2">
-          Absensi via WhatsApp tervalidasi lewat geofencing, cuti tercatat
-          rapi, dan data karyawan terpusat. Tanpa spreadsheet, tanpa
-          rumus manual.
+          {subtext}
         </p>
 
         <div className="relative mt-10">

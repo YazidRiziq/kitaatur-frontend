@@ -4,23 +4,26 @@ import { useState } from 'react'
 import { registerAction } from '@/lib/auth/actions'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Loader2, AlertCircle } from 'lucide-react'
+import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Spinner } from '@/components/ui/spinner'
+import { AlertCircleIcon } from 'lucide-react'
 
 export function RegisterForm() {
   const [error, setError] = useState('')
+  const [confirmError, setConfirmError] = useState('')
   const [loading, setLoading] = useState(false)
 
   async function handleSubmit(formData: FormData) {
     setLoading(true)
     setError('')
+    setConfirmError('')
 
     const password = formData.get('password') as string
     const confirmPassword = formData.get('confirmPassword') as string
 
     if (password !== confirmPassword) {
-      setError('Password dan konfirmasi password tidak cocok')
+      setConfirmError('Password dan konfirmasi password tidak cocok')
       setLoading(false)
       return
     }
@@ -33,97 +36,88 @@ export function RegisterForm() {
   }
 
   return (
-    <Card className="w-full max-w-md mx-auto border-0 shadow-[0_12px_40px_rgba(0,105,72,0.08)]">
-      <CardHeader className="space-y-1 pt-8">
-        <CardTitle className="font-headline text-2xl font-bold text-center text-on-surface">
-          Daftar
-        </CardTitle>
-        <CardDescription className="text-center text-on-surface-variant">
-          Buat akun baru untuk mulai menggunakan KitaAtur
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form 
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleSubmit(new FormData(e.currentTarget));
-          }} 
-          className="space-y-5"
-        >
-          {error && (
-            <div className="flex items-center gap-2 rounded-xl bg-red-50 p-3 text-sm text-red-600">
-              <AlertCircle size={16} />
-              <span>{error}</span>
-            </div>
-          )}
+    <form
+      onSubmit={(e) => {
+        e.preventDefault()
+        handleSubmit(new FormData(e.currentTarget))
+      }}
+      className="flex flex-col gap-5"
+    >
+      {error && (
+        <Alert variant="destructive">
+          <AlertCircleIcon />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
 
-          <div className="space-y-2">
-            <Label htmlFor="fullName" className="font-body text-on-surface">
-              Nama Lengkap
-            </Label>
-            <Input
-              id="fullName"
-              name="fullName"
-              type="text"
-              placeholder="Yazid Riziq"
-              required
-              className="rounded-xl h-11"
-            />
-          </div>
+      <FieldGroup>
+        <Field>
+          <FieldLabel htmlFor="fullName">Nama Lengkap</FieldLabel>
+          <Input
+            id="fullName"
+            name="fullName"
+            type="text"
+            placeholder="Yazid Riziq"
+            required
+            autoComplete="name"
+            className="rounded-sm h-10"
+          />
+        </Field>
 
-          <div className="space-y-2">
-            <Label htmlFor="email" className="font-body text-on-surface">
-              Email
-            </Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="admin@kitaatur.com"
-              required
-              className="rounded-xl h-11"
-            />
-          </div>
+        <Field>
+          <FieldLabel htmlFor="email">Email</FieldLabel>
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            placeholder="admin@kitaatur.com"
+            required
+            autoComplete="email"
+            className="rounded-sm h-10"
+          />
+        </Field>
 
-          <div className="space-y-2">
-            <Label htmlFor="password" className="font-body text-on-surface">
-              Password
-            </Label>
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              placeholder="Minimal 8 karakter"
-              required
-              minLength={8}
-              className="rounded-xl h-11"
-            />
-          </div>
+        <Field>
+          <FieldLabel htmlFor="password">Password</FieldLabel>
+          <Input
+            id="password"
+            name="password"
+            type="password"
+            placeholder="Minimal 8 karakter"
+            required
+            minLength={8}
+            autoComplete="new-password"
+            className="rounded-sm h-10"
+          />
+        </Field>
 
-          <div className="space-y-2">
-            <Label htmlFor="confirmPassword" className="font-body text-on-surface">
-              Konfirmasi Password
-            </Label>
-            <Input
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              placeholder="••••••••"
-              required
-              minLength={8}
-              className="rounded-xl h-11"
-            />
-          </div>
+        <Field data-invalid={!!confirmError}>
+          <FieldLabel htmlFor="confirmPassword">Konfirmasi Password</FieldLabel>
+          <Input
+            id="confirmPassword"
+            name="confirmPassword"
+            type="password"
+            placeholder="••••••••"
+            required
+            minLength={8}
+            autoComplete="new-password"
+            aria-invalid={!!confirmError}
+            onChange={() => confirmError && setConfirmError('')}
+            className="rounded-sm h-10"
+          />
+          {confirmError && <FieldError>{confirmError}</FieldError>}
+        </Field>
+      </FieldGroup>
 
-          <Button
-            type="submit"
-            disabled={loading}
-            className="w-full h-11 rounded-xl bg-primary hover:bg-primary/90 font-semibold"
-          >
-            {loading ? <Loader2 size={18} className="animate-spin" /> : 'Daftar'}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+      <Button
+        type="submit"
+        size="lg"
+        disabled={loading}
+        className="rounded-sm w-full h-11 font-medium"
+      >
+        {loading && <Spinner data-icon="inline-start" />}
+        {loading ? 'Memproses...' : 'Daftar'}
+      </Button>
+    </form>
   )
 }
