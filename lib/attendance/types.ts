@@ -44,3 +44,39 @@ export interface ExportInfo {
   url: string
   token: string
 }
+
+export type DailyStatus = "tepat_waktu" | "terlambat" | "di_luar_radius" | "tidak_hadir" | null
+
+export interface AttendanceEmployeeTrend {
+  employeeId: string
+  name: string
+  position: string
+  avatarUrl: string | null
+  hadirCount: number
+  totalDays: number
+  hadirRate: number
+  telatCount: number
+  outOfRangeCount: number
+  dailyStatus: Array<{
+    date: string
+    status: DailyStatus
+    checkIn: string | null
+    checkOut: string | null
+  }>
+}
+
+export interface AttendanceTrendFilters {
+  start: string
+  end: string
+  department_id?: string
+}
+
+export interface AttendanceTrendResponse {
+  range: { start: string; end: string }
+  summary: {
+    hadirRate: number
+    totalTelat: number
+    totalOutOfRange: number
+  }
+  employees: AttendanceEmployeeTrend[]
+}
