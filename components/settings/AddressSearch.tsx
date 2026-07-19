@@ -1,7 +1,9 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { Search, Loader2, MapPin } from "lucide-react"
+import { Search, MapPin } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Spinner } from "@/components/ui/spinner"
 
 interface NominatimResult {
   lat: string
@@ -77,39 +79,33 @@ export function AddressSearch({
   }
 
   return (
-    <div ref={containerRef} className="relative">
+    <div ref={containerRef} className="relative z-[1100]">
       <div className="relative">
-        <Search
-          size={16}
-          className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none"
-        />
-        <input
+        <Search className="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+        <Input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => results.length > 0 && setOpen(true)}
           placeholder={placeholder}
-          className="w-full h-11 pl-10 pr-4 rounded-xl border border-surface-variant/30 bg-surface-container-low text-sm font-medium text-on-surface outline-none focus:ring-2 focus:ring-primary/20"
+          className="pl-9"
         />
         {loading && (
-          <Loader2
-            size={16}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-primary animate-spin"
-          />
+          <Spinner className="absolute right-3 top-1/2 -translate-y-1/2 size-4" />
         )}
       </div>
 
       {open && results.length > 0 && (
-        <div className="absolute z-50 mt-1 w-full rounded-xl border border-surface-variant/30 bg-popover shadow-lg overflow-hidden max-h-60 overflow-y-auto">
+        <div className="absolute mt-1 w-full rounded-lg border border-border bg-popover shadow-lg overflow-hidden max-h-60 overflow-y-auto">
           {results.map((result, i) => (
             <button
               key={i}
               type="button"
               onClick={() => handleSelect(result)}
-              className="flex items-start gap-2 w-full px-4 py-2.5 text-left text-sm hover:bg-surface-container-low transition-colors border-b border-surface-variant/10 last:border-0"
+              className="flex items-start gap-2 w-full px-3 py-2.5 text-left text-sm hover:bg-muted transition-colors border-b border-border/50 last:border-0"
             >
-              <MapPin size={14} className="mt-0.5 shrink-0 text-primary" />
-              <span className="text-on-surface-variant">
+              <MapPin className="mt-0.5 size-3.5 shrink-0 text-primary" />
+              <span className="text-muted-foreground">
                 {result.display_name}
               </span>
             </button>

@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Loader2, FolderTree } from "lucide-react"
 import {
   Sheet,
   SheetContent,
@@ -11,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Spinner } from "@/components/ui/spinner"
 import { createDepartment, updateDepartment } from "@/lib/departments/actions"
 import type { Department } from "@/lib/departments/types"
 import { toast } from "sonner"
@@ -74,10 +74,15 @@ export function DepartmentSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="w-full sm:max-w-md p-0">
         <div className="flex flex-col h-full">
-          <SheetHeader className="p-6 pb-4 border-b border-surface-variant/20">
-            <SheetTitle className="font-headline text-xl font-bold text-on-surface">
+          <SheetHeader className="p-6 pb-4 border-b border-border">
+            <SheetTitle className="text-lg font-medium text-foreground">
               {isEditing ? "Edit Departemen" : "Tambah Departemen"}
             </SheetTitle>
+            {isEditing && editDepartment && editDepartment.employee_count > 0 && (
+              <p className="text-xs text-muted-foreground">
+                {editDepartment.employee_count} karyawan terkait departemen ini
+              </p>
+            )}
           </SheetHeader>
 
           <form
@@ -85,30 +90,21 @@ export function DepartmentSheet({
             className="flex-1 overflow-y-auto p-6 space-y-5"
           >
             <div className="space-y-1.5">
-              <Label
-                htmlFor="departmentName"
-                className="text-sm font-medium text-on-surface"
-              >
-                Nama Departemen <span className="text-error">*</span>
+              <Label htmlFor="departmentName">
+                Nama Departemen <span className="text-destructive">*</span>
               </Label>
-              <div className="relative">
-                <FolderTree
-                  size={16}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                />
-                <Input
-                  id="departmentName"
-                  placeholder="Engineering"
-                  value={name}
-                  onChange={(e) => {
-                    setName(e.target.value)
-                    setError("")
-                  }}
-                  className="pl-10 h-10 rounded-xl bg-surface-container-low border-none focus-visible:ring-2 focus-visible:ring-primary/20"
-                />
-              </div>
+              <Input
+                id="departmentName"
+                placeholder="Engineering"
+                value={name}
+                onChange={(e) => {
+                  setName(e.target.value)
+                  setError("")
+                }}
+                autoFocus
+              />
               {error && (
-                <p className="text-xs text-error mt-1">{error}</p>
+                <p className="text-xs text-destructive">{error}</p>
               )}
             </div>
 
@@ -116,11 +112,12 @@ export function DepartmentSheet({
               <Button
                 type="submit"
                 disabled={submitting}
-                className="w-full h-11 rounded-xl bg-primary hover:bg-primary/90 font-semibold text-white"
+                size="lg"
+                className="w-full"
               >
                 {submitting ? (
                   <>
-                    <Loader2 size={18} className="animate-spin" />
+                    <Spinner data-icon="inline-start" />
                     Menyimpan...
                   </>
                 ) : (

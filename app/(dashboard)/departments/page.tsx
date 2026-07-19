@@ -2,17 +2,20 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 
 import { useState, useEffect, useCallback } from "react"
-import { Plus } from "lucide-react"
+import { SearchIcon, Plus } from "lucide-react"
 import { getDepartments } from "@/lib/departments/actions"
 import type { Department } from "@/lib/departments/types"
 import { DepartmentTable } from "@/components/departments/DepartmentTable"
 import { DepartmentSheet } from "@/components/departments/DepartmentSheet"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 
 export default function DepartmentsPage() {
   const [departments, setDepartments] = useState<Department[]>([])
   const [loading, setLoading] = useState(true)
   const [sheetOpen, setSheetOpen] = useState(false)
   const [editDepartment, setEditDepartment] = useState<Department | null>(null)
+  const [search, setSearch] = useState("")
 
   const fetchDepartments = useCallback(() => {
     setLoading(true)
@@ -43,36 +46,47 @@ export default function DepartmentsPage() {
     fetchDepartments()
   }
 
+  const filtered = search
+    ? departments.filter((d) =>
+        d.name.toLowerCase().includes(search.toLowerCase())
+      )
+    : departments
+
   return (
-    <div className="pl-8 pr-8 flex-1">
-      <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="font-headline tracking-tight text-3xl font-bold text-on-surface">
+          <h1 className="text-[1.75rem] leading-tight font-medium tracking-[-0.42px] text-foreground">
             Departemen
-          </h2>
-          <p className="text-on-surface-variant mt-1">
+          </h1>
+          <p className="text-sm text-muted-foreground">
             Kelola data departemen di perusahaan.
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={handleAdd}
-            className="bg-primary text-white px-6 py-2.5 rounded-3xl font-semibold shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition-all active:scale-95"
-          >
-            <Plus size={20} />
-            Tambah Departemen
-          </button>
-        </div>
       </div>
 
-      <div className="flex flex-col gap-8">
-        <DepartmentTable
-          data={departments}
-          loading={loading}
-          onEdit={handleEdit}
-          onRefresh={fetchDepartments}
-        />
+      <div className="flex items-center gap-3">
+        <div className="relative flex-1 min-w-48 max-w-xs">
+          <SearchIcon className="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Cari departemen..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-9"
+          />
+        </div>
+        <Button onClick={handleAdd} className="ml-auto">
+          <Plus data-icon="inline-start" />
+          Tambah Departemen
+        </Button>
       </div>
+
+      <DepartmentTable
+        data={filtered}
+        loading={loading}
+        onEdit={handleEdit}
+        onRefresh={fetchDepartments}
+      />
 
       <DepartmentSheet
         open={sheetOpen}

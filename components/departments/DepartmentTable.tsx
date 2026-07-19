@@ -1,10 +1,38 @@
 "use client"
 
 import { useState } from "react"
-import { Pencil, Trash2, Loader2, FolderTree } from "lucide-react"
+import { Pencil, Trash2, FolderTree } from "lucide-react"
 import type { Department } from "@/lib/departments/types"
 import { deleteDepartment } from "@/lib/departments/actions"
 import { toast } from "sonner"
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table"
+import { Button } from "@/components/ui/button"
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog"
+import {
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+  EmptyDescription,
+} from "@/components/ui/empty"
+import { Skeleton } from "@/components/ui/skeleton"
+import { Spinner } from "@/components/ui/spinner"
 
 interface DepartmentTableProps {
   data: Department[]
@@ -19,112 +47,209 @@ export function DepartmentTable({
   onEdit,
   onRefresh,
 }: DepartmentTableProps) {
-  const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [deleteTarget, setDeleteTarget] = useState<Department | null>(null)
+  const [deleting, setDeleting] = useState(false)
 
-  async function handleDelete(department: Department) {
-    if (department.employee_count > 0) {
-      toast.error("Tidak dapat menghapus departemen", {
-        description: `Masih ada ${department.employee_count} karyawan di departemen ini.`,
-      })
-      return
-    }
+  function handleDeleteClick(department: Department) {
+    setDeleteTarget(department)
+  }
 
-    if (!confirm(`Hapus departemen "${department.name}"?`)) return
+  async function confirmDelete() {
+    if (!deleteTarget) return
 
-    setDeletingId(department.id)
+    setDeleting(true)
     try {
-      await deleteDepartment(department.id)
-      toast.success(`Departemen "${department.name}" dihapus`)
+      await deleteDepartment(deleteTarget.id)
+      toast.success(`Departemen "${deleteTarget.name}" dihapus`)
       onRefresh()
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "Gagal menghapus departemen"
       )
     } finally {
-      setDeletingId(null)
+      setDeleting(false)
+      setDeleteTarget(null)
     }
   }
 
   if (loading) {
     return (
-      <div className="bg-surface-container-lowest rounded-3xl shadow-sm border border-emerald-50/20 p-12 flex items-center justify-center">
-        <Loader2 size={32} className="animate-spin text-primary" />
+      <div className="rounded-lg border border-border overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-muted/50">
+              <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Nama Departemen
+              </TableHead>
+              <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Jumlah Karyawan
+              </TableHead>
+              <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground text-right">
+                Aksi
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {Array.from({ length: 3 }).map((_, i) => (
+              <TableRow key={i}>
+                <TableCell className="px-4 py-3">
+                  <div className="flex items-center gap-3">
+                    <Skeleton className="size-7 rounded-sm" />
+                    <Skeleton className="h-4 w-32" />
+                  </div>
+                </TableCell>
+                <TableCell className="px-4 py-3">
+                  <Skeleton className="h-4 w-20" />
+                </TableCell>
+                <TableCell className="px-4 py-3 text-right">
+                  <div className="flex items-center justify-end gap-1">
+                    <Skeleton className="size-7 rounded-md" />
+                    <Skeleton className="size-7 rounded-md" />
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
     )
   }
 
   if (data.length === 0) {
     return (
-      <div className="bg-surface-container-lowest rounded-3xl shadow-sm border border-emerald-50/20 p-12 text-center">
-        <FolderTree size={40} className="mx-auto text-slate-300 mb-3" />
-        <p className="text-on-surface-variant text-sm">Belum ada departemen.</p>
-        <p className="text-outline text-xs mt-1">
-          Tambah departemen melalui tombol di atas.
-        </p>
+      <div className="rounded-lg border border-border">
+        <Empty className="py-16">
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <FolderTree />
+            </EmptyMedia>
+            <EmptyTitle>Belum ada departemen</EmptyTitle>
+            <EmptyDescription>
+              Tambahkan departemen baru melalui tombol di atas.
+            </EmptyDescription>
+          </EmptyHeader>
+        </Empty>
       </div>
     )
   }
 
   return (
-    <div className="bg-surface-container-lowest rounded-3xl shadow-sm border border-emerald-50/20 overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="text-outline text-[11px] uppercase tracking-widest font-bold border-b border-surface-variant/30">
-              <th className="px-8 py-4">Nama Departemen</th>
-              <th className="px-6 py-4">Jumlah Karyawan</th>
-              <th className="px-8 py-4 text-right">Aksi</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-surface-variant/10">
+    <>
+      <div className="rounded-lg border border-border overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-muted/50">
+              <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Nama Departemen
+              </TableHead>
+              <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Jumlah Karyawan
+              </TableHead>
+              <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground text-right">
+                Aksi
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {data.map((dept) => (
-              <tr
-                key={dept.id}
-                className="hover:bg-surface-container-low/50 transition-colors group"
-              >
-                <td className="px-8 py-5">
+              <TableRow key={dept.id}>
+                <TableCell className="px-4 py-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
-                      <FolderTree size={20} className="text-primary" />
+                    <div className="flex size-7 items-center justify-center rounded-sm bg-primary/10 text-primary">
+                      <FolderTree className="size-4" />
                     </div>
-                    <p className="font-semibold text-on-surface text-sm">
+                    <span className="text-sm font-medium text-foreground">
                       {dept.name}
-                    </p>
+                    </span>
                   </div>
-                </td>
-                <td className="px-6 py-5">
-                  <span className="inline-flex px-3 py-1 bg-surface-container-high rounded-full text-xs font-bold text-on-surface-variant">
+                </TableCell>
+                <TableCell className="px-4 py-3">
+                  <span className="text-sm tabular-nums text-muted-foreground">
                     {dept.employee_count} karyawan
                   </span>
-                </td>
-                <td className="px-8 py-5 text-right">
-                  <div className="flex items-center justify-end gap-2">
-                    <button
+                </TableCell>
+                <TableCell className="px-4 py-3 text-right">
+                  <div className="flex items-center justify-end gap-1">
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
                       onClick={() => onEdit(dept)}
-                      className="p-2 text-outline hover:text-primary hover:bg-primary/5 rounded-xl transition-all"
-                      title="Edit"
+                      aria-label={`Edit departemen ${dept.name}`}
                     >
-                      <Pencil size={18} />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(dept)}
-                      disabled={deletingId === dept.id}
-                      className="p-2 text-outline hover:text-error hover:bg-error/5 rounded-xl transition-all disabled:opacity-50"
-                      title="Hapus"
+                      <Pencil />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      onClick={() => handleDeleteClick(dept)}
+                      className="text-muted-foreground hover:text-destructive"
+                      aria-label={`Hapus departemen ${dept.name}`}
                     >
-                      {deletingId === dept.id ? (
-                        <Loader2 size={18} className="animate-spin" />
-                      ) : (
-                        <Trash2 size={18} />
-                      )}
-                    </button>
+                      <Trash2 />
+                    </Button>
                   </div>
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
-    </div>
+
+      <AlertDialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => {
+          if (!open) setDeleteTarget(null)
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Hapus Departemen?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {deleteTarget && deleteTarget.employee_count > 0 ? (
+                <>
+                  Departemen &ldquo;{deleteTarget.name}&rdquo; tidak dapat
+                  dihapus karena masih memiliki{" "}
+                  <span className="font-medium text-foreground">
+                    {deleteTarget.employee_count} karyawan
+                  </span>{" "}
+                  yang terkait. Pindahkan atau hapus karyawan terlebih dahulu.
+                </>
+              ) : (
+                <>
+                  Departemen &ldquo;{deleteTarget?.name}&rdquo; akan dihapus
+                  secara permanen. Tindakan ini tidak dapat dibatalkan.
+                </>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting}>
+              {deleteTarget && deleteTarget.employee_count > 0
+                ? "Tutup"
+                : "Batal"}
+            </AlertDialogCancel>
+            {deleteTarget && deleteTarget.employee_count === 0 && (
+              <AlertDialogAction
+                onClick={(e) => {
+                  e.preventDefault()
+                  confirmDelete()
+                }}
+                disabled={deleting}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                {deleting ? (
+                  <>
+                    <Spinner data-icon="inline-start" />
+                    Menghapus...
+                  </>
+                ) : (
+                  "Hapus"
+                )}
+              </AlertDialogAction>
+            )}
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   )
 }

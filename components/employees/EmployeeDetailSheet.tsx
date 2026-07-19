@@ -1,13 +1,24 @@
 "use client"
 
 import * as React from "react"
-import Image from "next/image"
 import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogClose } from "@/components/ui/dialog"
-import { AlertTriangle, Loader2, Pencil, Save, X } from "lucide-react"
+import { AlertTriangle, Pencil, Save, X } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Spinner } from "@/components/ui/spinner"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { Badge } from "@/components/ui/badge"
+import { Separator } from "@/components/ui/separator"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { updateEmployee, deactivateEmployee } from "@/lib/employees/actions"
 import type { Employee, WorkLocation } from "@/lib/employees/types"
 import type { Department } from "@/lib/departments/types"
@@ -40,23 +51,11 @@ function formatDate(dateStr: string): string {
   })
 }
 
-function ReadonlyField({
-  label,
-  value,
-  className = "",
-}: {
-  label: string
-  value: React.ReactNode
-  className?: string
-}) {
+function InfoField({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <div className={className}>
-      <label className="mb-1.5 block text-xs font-semibold text-on-surface-variant">
-        {label}
-      </label>
-      <div className="min-h-11 w-full rounded-xl border border-surface-variant/30 bg-surface-container-low px-4 py-3 text-sm font-medium text-on-surface">
-        {value || "-"}
-      </div>
+    <div>
+      <dt className="text-sm text-muted-foreground">{label}</dt>
+      <dd className="mt-0.5 text-sm text-foreground">{value || "—"}</dd>
     </div>
   )
 }
@@ -191,13 +190,13 @@ export function EmployeeDetailSheet({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent showCloseButton={false} className="flex max-h-[90vh] max-w-3xl sm:max-w-3xl flex-col overflow-hidden rounded-3xl border border-surface-variant/20 shadow-2xl p-0 gap-0">
-        <div className="flex items-start justify-between gap-4 border-b border-surface-variant/20 p-6">
+      <DialogContent showCloseButton={false} className="flex max-h-[90vh] max-w-2xl sm:max-w-2xl flex-col overflow-hidden p-0 gap-0">
+        <div className="flex items-start justify-between gap-4 border-b border-border px-6 py-5">
           <div>
-            <DialogTitle className="font-headline text-xl font-bold text-on-surface">
-              Detail Karyawan
+            <DialogTitle className="text-lg font-medium text-foreground">
+              {editing ? "Edit Karyawan" : "Detail Karyawan"}
             </DialogTitle>
-            <DialogDescription className="mt-1 text-sm text-on-surface-variant">
+            <DialogDescription className="mt-1 text-sm text-muted-foreground">
               {editing
                 ? "Ubah informasi karyawan aktif."
                 : "Informasi karyawan aktif yang sudah bergabung."}
@@ -209,29 +208,29 @@ export function EmployeeDetailSheet({
               <Button
                 type="button"
                 size="sm"
-                className="rounded-xl"
                 onClick={() => setEditing(true)}
               >
-                <Pencil size={15} />
+                <Pencil className="size-3.5" />
                 Edit
               </Button>
             )}
 
             <DialogClose asChild>
-              <button
+              <Button
                 type="button"
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-outline transition-colors hover:bg-surface-container-low hover:text-on-surface"
+                variant="ghost"
+                size="icon-sm"
                 aria-label="Tutup detail karyawan"
               >
-                <X size={18} />
-              </button>
+                <X />
+              </Button>
             </DialogClose>
           </div>
         </div>
 
         {!employee ? (
           <div className="flex min-h-64 items-center justify-center p-6">
-            <p className="text-sm text-on-surface-variant">
+            <p className="text-sm text-muted-foreground">
               Data karyawan tidak tersedia.
             </p>
           </div>
@@ -240,58 +239,40 @@ export function EmployeeDetailSheet({
             onSubmit={handleSubmit}
             className="flex min-h-0 flex-1 flex-col"
           >
-            <div className="flex-1 min-h-0 overflow-y-auto p-6">
-              <div className="mb-5 overflow-hidden rounded-3xl border border-surface-variant/20 bg-surface-container-lowest">
-                <div className="h-20 bg-linear-to-r from-primary/20 via-primary/10 to-transparent" />
+            <div className="flex-1 min-h-0 overflow-y-auto p-6 space-y-6">
+              {/* Profile Section */}
+              <div className="flex items-center gap-4">
+                <Avatar className="size-16">
+                  {employee.avatar_url ? (
+                    <AvatarImage
+                      src={employee.avatar_url}
+                      alt={employee.name}
+                    />
+                  ) : null}
+                  <AvatarFallback className="text-2xl bg-primary/10 text-primary">
+                    {initial}
+                  </AvatarFallback>
+                </Avatar>
 
-                <div className="-mt-8 flex flex-col gap-4 px-6 pb-6 sm:flex-row sm:items-end sm:justify-between">
-                  <div className="flex items-end gap-4">
-                    <div className="relative h-20 w-20 overflow-hidden rounded-3xl border-4 border-popover bg-primary/10 shadow-sm">
-                      {employee.avatar_url ? (
-                        <Image
-                          src={employee.avatar_url}
-                          alt={employee.name}
-                          fill
-                          className="object-cover"
-                        />
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center text-3xl font-bold text-primary">
-                          {initial}
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="min-w-0 pb-1">
-                      <h3 className="truncate text-xl font-bold text-on-surface">
-                        {editing ? name || employee.name : employee.name}
-                      </h3>
-                      <p className="truncate text-sm text-on-surface-variant">
-                        {editing ? email || employee.email : employee.email}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="inline-flex w-fit rounded-full bg-primary/10 px-3 py-1.5 text-xs font-bold text-primary">
+                <div className="min-w-0 flex-1">
+                  <h3 className="truncate text-lg font-medium text-foreground">
+                    {editing ? name || employee.name : employee.name}
+                  </h3>
+                  <p className="truncate text-sm text-muted-foreground">
+                    {editing ? email || employee.email : employee.email}
+                  </p>
+                  <Badge variant="secondary" className="mt-2">
                     Karyawan Aktif
-                  </div>
+                  </Badge>
                 </div>
               </div>
 
-              <div className="rounded-3xl border border-surface-variant/20 bg-surface-container-lowest p-5">
-                <div className="mb-5">
-                  <h4 className="font-headline text-base font-bold text-on-surface">
-                    Informasi Karyawan
-                  </h4>
-                  <p className="mt-1 text-sm text-on-surface-variant">
-                    {editing
-                      ? "Pastikan data karyawan sudah sesuai sebelum disimpan."
-                      : "Data berikut bersifat read-only."}
-                  </p>
-                </div>
+              <Separator />
 
-                {editing ? (
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <div>
+              {editing ? (
+                <>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="space-y-1.5">
                       <Label htmlFor="employee-detail-name">
                         Nama Lengkap
                       </Label>
@@ -299,22 +280,20 @@ export function EmployeeDetailSheet({
                         id="employee-detail-name"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="mt-1.5 h-11 rounded-xl bg-surface-container-low border-surface-variant/30"
                       />
                     </div>
 
-                    <div>
+                    <div className="space-y-1.5">
                       <Label htmlFor="employee-detail-email">Email</Label>
                       <Input
                         id="employee-detail-email"
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="mt-1.5 h-11 rounded-xl bg-surface-container-low border-surface-variant/30"
                       />
                     </div>
 
-                    <div>
+                    <div className="space-y-1.5">
                       <Label htmlFor="employee-detail-phone">
                         Nomor Telepon
                       </Label>
@@ -322,11 +301,10 @@ export function EmployeeDetailSheet({
                         id="employee-detail-phone"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
-                        className="mt-1.5 h-11 rounded-xl bg-surface-container-low border-surface-variant/30"
                       />
                     </div>
 
-                    <div>
+                    <div className="space-y-1.5">
                       <Label htmlFor="employee-detail-number">
                         Nomor Induk Karyawan
                       </Label>
@@ -334,124 +312,107 @@ export function EmployeeDetailSheet({
                         id="employee-detail-number"
                         value={employeeNumber}
                         onChange={(e) => setEmployeeNumber(e.target.value)}
-                        className="mt-1.5 h-11 rounded-xl bg-surface-container-low border-surface-variant/30"
                       />
                     </div>
 
-                    <div>
-                      <Label htmlFor="employee-detail-department">
-                        Departemen
-                      </Label>
-                      <select
-                        id="employee-detail-department"
-                        value={departmentId}
-                        onChange={(e) => setDepartmentId(e.target.value)}
-                        className="mt-1.5 h-11 w-full rounded-xl border border-surface-variant/30 bg-surface-container-low px-4 text-sm font-medium text-on-surface outline-none focus:ring-2 focus:ring-primary/20"
-                      >
-                        <option value="">Pilih Departemen</option>
-                        {departments.map((department) => (
-                          <option key={department.id} value={department.id}>
-                            {department.name}
-                          </option>
-                        ))}
-                      </select>
+                    <div className="space-y-1.5">
+                      <Label>Departemen</Label>
+                      <Select value={departmentId} onValueChange={setDepartmentId}>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Pilih Departemen" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {departments.map((department) => (
+                            <SelectItem key={department.id} value={department.id}>
+                              {department.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
 
-                    <div>
-                      <Label htmlFor="employee-detail-position">
-                        Jabatan
-                      </Label>
-                      <select
-                        id="employee-detail-position"
-                        value={positionId}
-                        onChange={(e) => setPositionId(e.target.value)}
-                        className="mt-1.5 h-11 w-full rounded-xl border border-surface-variant/30 bg-surface-container-low px-4 text-sm font-medium text-on-surface outline-none focus:ring-2 focus:ring-primary/20"
-                      >
-                        <option value="">Pilih Jabatan</option>
-                        {positions.map((position) => (
-                          <option key={position.id} value={position.id}>
-                            {position.title}
-                          </option>
-                        ))}
-                      </select>
+                    <div className="space-y-1.5">
+                      <Label>Jabatan</Label>
+                      <Select value={positionId} onValueChange={setPositionId}>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Pilih Jabatan" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {positions.map((position) => (
+                            <SelectItem key={position.id} value={position.id}>
+                              {position.title}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
-
-                    <ReadonlyField
-                      label="Tanggal Bergabung"
-                      value={formatDate(employee.joined_at)}
-                    />
                   </div>
-                ) : (
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <ReadonlyField
-                      label="Nama Lengkap"
-                      value={employee.name}
-                    />
 
-                    <ReadonlyField label="Email" value={employee.email} />
-
-                    <ReadonlyField
-                      label="Nomor Telepon"
-                      value={employee.phone || "-"}
-                    />
-
-                    <ReadonlyField
-                      label="Nomor Induk Karyawan"
-                      value={employee.employee_number || "-"}
-                    />
-
-                    <ReadonlyField
-                      label="Departemen"
-                      value={employee.department?.name || "-"}
-                    />
-
-                    <ReadonlyField
-                      label="Jabatan"
-                      value={employee.position?.title || "-"}
-                    />
-
-                    <ReadonlyField
-                      label="Tanggal Bergabung"
-                      value={formatDate(employee.joined_at)}
-                    />
+                  <p className="text-sm text-muted-foreground">
+                    Bergabung sejak {formatDate(employee.joined_at)}
+                  </p>
+                </>
+              ) : (
+                <>
+                  {/* Informasi Pribadi */}
+                  <div>
+                    <h4 className="text-sm font-medium text-foreground mb-3">
+                      Informasi Pribadi
+                    </h4>
+                    <dl className="grid gap-3 sm:grid-cols-2">
+                      <InfoField label="Nama Lengkap" value={employee.name} />
+                      <InfoField label="Email" value={employee.email} />
+                      <InfoField label="Nomor Telepon" value={employee.phone} />
+                      <InfoField label="Nomor Induk Karyawan" value={employee.employee_number} />
+                    </dl>
                   </div>
-                )}
-              </div>
 
-              {!editing && (
-                <div className="mt-5">
-                  <div className="rounded-2xl border border-surface-variant/20 bg-surface-container-lowest p-5">
-                    <div className="mb-4">
-                      <h4 className="font-headline text-base font-bold text-on-surface">
-                        Lokasi Kerja
-                      </h4>
-                      <p className="mt-1 text-sm text-on-surface-variant">
-                        Atur lokasi absensi khusus untuk karyawan lapangan.
-                        Jika kosong, karyawan menggunakan lokasi default kantor.
-                      </p>
-                    </div>
+                  <Separator />
+
+                  {/* Informasi Organisasi */}
+                  <div>
+                    <h4 className="text-sm font-medium text-foreground mb-3">
+                      Informasi Organisasi
+                    </h4>
+                    <dl className="grid gap-3 sm:grid-cols-2">
+                      <InfoField label="Departemen" value={employee.department?.name} />
+                      <InfoField label="Jabatan" value={employee.position?.title} />
+                      <InfoField label="Tanggal Bergabung" value={formatDate(employee.joined_at)} />
+                    </dl>
+                  </div>
+
+                  <Separator />
+
+                  {/* Lokasi Kerja */}
+                  <div>
+                    <h4 className="text-sm font-medium text-foreground mb-1">
+                      Lokasi Kerja
+                    </h4>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Atur lokasi absensi khusus untuk karyawan lapangan.
+                      Jika kosong, karyawan menggunakan lokasi default kantor.
+                    </p>
                     <WorkLocationEditor
                       employeeId={employee.id}
                       currentLocation={workLocation}
                       onUpdated={setWorkLocation}
                     />
                   </div>
-                </div>
-              )}
 
-              {!editing && (
-                <div className="mt-5">
-                  <div className="rounded-2xl border border-error/20 bg-error/5 p-5">
+                  <Separator />
+
+                  {/* Zona Berbahaya */}
+                  <div className="rounded-lg border border-destructive/20 bg-destructive/5 p-5">
                     <div className="flex items-start gap-3">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-error/10 text-error">
-                        <AlertTriangle size={18} />
+                      <div className="flex size-9 shrink-0 items-center justify-center rounded-sm bg-destructive/10 text-destructive">
+                        <AlertTriangle className="size-4" />
                       </div>
 
                       <div className="min-w-0 flex-1">
-                        <h4 className="text-sm font-bold text-on-surface">
+                        <h4 className="text-sm font-medium text-foreground">
                           Nonaktifkan Karyawan
                         </h4>
-                        <p className="mt-1 text-xs text-on-surface-variant">
+                        <p className="mt-1 text-xs text-muted-foreground">
                           Karyawan tidak akan muncul lagi di daftar Karyawan
                           Aktif, tetapi riwayat absensi dan data terkait tetap
                           tersimpan.
@@ -462,21 +423,19 @@ export function EmployeeDetailSheet({
                             type="button"
                             variant="destructive"
                             size="sm"
-                            className="mt-4 rounded-xl"
+                            className="mt-4"
                             onClick={() => setConfirmDeactivate(true)}
                           >
                             Nonaktifkan Karyawan
                           </Button>
                         ) : (
                           <div className="mt-4 space-y-3">
-                            <div>
-                              <Label
-                                htmlFor="deactivate-reason"
-                                className="text-xs font-semibold text-on-surface-variant"
-                              >
-                                Alasan Nonaktif <span className="text-error">(wajib diisi)</span>
+                            <div className="space-y-1.5">
+                              <Label htmlFor="deactivate-reason">
+                                Alasan Nonaktif{" "}
+                                <span className="text-destructive">(wajib diisi)</span>
                               </Label>
-                              <textarea
+                              <Textarea
                                 id="deactivate-reason"
                                 value={deactivateReason}
                                 onChange={(e) =>
@@ -484,7 +443,6 @@ export function EmployeeDetailSheet({
                                 }
                                 placeholder="Contoh: Resign dari perusahaan, efektif 30 Juni 2026"
                                 rows={3}
-                                className="mt-1.5 w-full rounded-xl border border-surface-variant/30 bg-surface-container-lowest px-4 py-3 text-sm font-medium text-on-surface outline-none focus:ring-2 focus:ring-primary/20 resize-none"
                               />
                             </div>
 
@@ -493,7 +451,6 @@ export function EmployeeDetailSheet({
                                 type="button"
                                 variant="outline"
                                 size="sm"
-                                className="rounded-xl"
                                 disabled={deactivating}
                                 onClick={() => {
                                   setConfirmDeactivate(false)
@@ -507,16 +464,12 @@ export function EmployeeDetailSheet({
                                 type="button"
                                 variant="destructive"
                                 size="sm"
-                                className="rounded-xl"
                                 disabled={deactivating}
                                 onClick={handleDeactivate}
                               >
                                 {deactivating ? (
                                   <>
-                                    <Loader2
-                                      size={15}
-                                      className="animate-spin"
-                                    />
+                                    <Spinner data-icon="inline-start" />
                                     Menonaktifkan...
                                   </>
                                 ) : (
@@ -529,16 +482,15 @@ export function EmployeeDetailSheet({
                       </div>
                     </div>
                   </div>
-                </div>
+                </>
               )}
             </div>
 
             {editing && (
-              <div className="flex items-center justify-end gap-3 border-t border-surface-variant/20 px-6 py-4">
+              <div className="flex items-center justify-end gap-3 border-t border-border px-6 py-4">
                 <Button
                   type="button"
                   variant="outline"
-                  className="rounded-xl"
                   disabled={submitting}
                   onClick={handleCancelEdit}
                 >
@@ -547,18 +499,17 @@ export function EmployeeDetailSheet({
 
                 <Button
                   type="submit"
-                  className="rounded-xl"
                   disabled={submitting}
                 >
                   {submitting ? (
                     <>
-                      <Loader2 size={15} className="animate-spin" />
+                      <Spinner data-icon="inline-start" />
                       Menyimpan...
                     </>
                   ) : (
                     <>
-                      <Save size={15} />
-                      Simpan
+                      <Save className="size-3.5" />
+                      Simpan Perubahan
                     </>
                   )}
                 </Button>

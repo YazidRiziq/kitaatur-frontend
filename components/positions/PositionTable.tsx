@@ -1,10 +1,39 @@
 "use client"
 
 import { useState } from "react"
-import { Pencil, Trash2, Loader2, Briefcase } from "lucide-react"
+import { Pencil, Trash2, Briefcase } from "lucide-react"
 import type { Position } from "@/lib/positions/types"
 import { deletePosition } from "@/lib/positions/actions"
 import { toast } from "sonner"
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog"
+import {
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+  EmptyDescription,
+} from "@/components/ui/empty"
+import { Skeleton } from "@/components/ui/skeleton"
+import { Spinner } from "@/components/ui/spinner"
 
 interface PositionTableProps {
   data: Position[]
@@ -19,122 +48,225 @@ export function PositionTable({
   onEdit,
   onRefresh,
 }: PositionTableProps) {
-  const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [deleteTarget, setDeleteTarget] = useState<Position | null>(null)
+  const [deleting, setDeleting] = useState(false)
 
-  async function handleDelete(position: Position) {
-    if (position.employee_count > 0) {
-      toast.error("Tidak dapat menghapus jabatan", {
-        description: `Masih ada ${position.employee_count} karyawan dengan jabatan ini.`,
-      })
-      return
-    }
+  function handleDeleteClick(position: Position) {
+    setDeleteTarget(position)
+  }
 
-    if (!confirm(`Hapus jabatan "${position.title}"?`)) return
+  async function confirmDelete() {
+    if (!deleteTarget) return
 
-    setDeletingId(position.id)
+    setDeleting(true)
     try {
-      await deletePosition(position.id)
-      toast.success(`Jabatan "${position.title}" dihapus`)
+      await deletePosition(deleteTarget.id)
+      toast.success(`Jabatan "${deleteTarget.title}" dihapus`)
       onRefresh()
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "Gagal menghapus jabatan"
       )
     } finally {
-      setDeletingId(null)
+      setDeleting(false)
+      setDeleteTarget(null)
     }
   }
 
   if (loading) {
     return (
-      <div className="bg-surface-container-lowest rounded-3xl shadow-sm border border-emerald-50/20 p-12 flex items-center justify-center">
-        <Loader2 size={32} className="animate-spin text-primary" />
+      <div className="rounded-lg border border-border overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-muted/50">
+              <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Nama Jabatan
+              </TableHead>
+              <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Grade
+              </TableHead>
+              <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Jumlah Karyawan
+              </TableHead>
+              <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground text-right">
+                Aksi
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {Array.from({ length: 3 }).map((_, i) => (
+              <TableRow key={i}>
+                <TableCell className="px-4 py-3">
+                  <div className="flex items-center gap-3">
+                    <Skeleton className="size-7 rounded-sm" />
+                    <Skeleton className="h-4 w-32" />
+                  </div>
+                </TableCell>
+                <TableCell className="px-4 py-3">
+                  <Skeleton className="h-5 w-12 rounded-full" />
+                </TableCell>
+                <TableCell className="px-4 py-3">
+                  <Skeleton className="h-4 w-20" />
+                </TableCell>
+                <TableCell className="px-4 py-3 text-right">
+                  <div className="flex items-center justify-end gap-1">
+                    <Skeleton className="size-7 rounded-md" />
+                    <Skeleton className="size-7 rounded-md" />
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
     )
   }
 
   if (data.length === 0) {
     return (
-      <div className="bg-surface-container-lowest rounded-3xl shadow-sm border border-emerald-50/20 p-12 text-center">
-        <Briefcase size={40} className="mx-auto text-slate-300 mb-3" />
-        <p className="text-on-surface-variant text-sm">Belum ada jabatan.</p>
-        <p className="text-outline text-xs mt-1">
-          Tambah jabatan melalui tombol di atas.
-        </p>
+      <div className="rounded-lg border border-border">
+        <Empty className="py-16">
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <Briefcase />
+            </EmptyMedia>
+            <EmptyTitle>Belum ada jabatan</EmptyTitle>
+            <EmptyDescription>
+              Tambahkan jabatan baru melalui tombol di atas.
+            </EmptyDescription>
+          </EmptyHeader>
+        </Empty>
       </div>
     )
   }
 
   return (
-    <div className="bg-surface-container-lowest rounded-3xl shadow-sm border border-emerald-50/20 overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="text-outline text-[11px] uppercase tracking-widest font-bold border-b border-surface-variant/30">
-              <th className="px-8 py-4">Nama Jabatan</th>
-              <th className="px-6 py-4">Grade</th>
-              <th className="px-6 py-4">Jumlah Karyawan</th>
-              <th className="px-8 py-4 text-right">Aksi</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-surface-variant/10">
+    <>
+      <div className="rounded-lg border border-border overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-muted/50">
+              <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Nama Jabatan
+              </TableHead>
+              <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Grade
+              </TableHead>
+              <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Jumlah Karyawan
+              </TableHead>
+              <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground text-right">
+                Aksi
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {data.map((pos) => (
-              <tr
-                key={pos.id}
-                className="hover:bg-surface-container-low/50 transition-colors group"
-              >
-                <td className="px-8 py-5">
+              <TableRow key={pos.id}>
+                <TableCell className="px-4 py-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
-                      <Briefcase size={20} className="text-blue-500" />
+                    <div className="flex size-7 items-center justify-center rounded-sm bg-primary/10 text-primary">
+                      <Briefcase className="size-4" />
                     </div>
-                    <p className="font-semibold text-on-surface text-sm">
+                    <span className="text-sm font-medium text-foreground">
                       {pos.title}
-                    </p>
-                  </div>
-                </td>
-                <td className="px-6 py-5">
-                  {pos.grade ? (
-                    <span className="inline-flex px-3 py-1 bg-surface-container-high rounded-full text-xs font-bold text-on-surface-variant">
-                      {pos.grade}
                     </span>
+                  </div>
+                </TableCell>
+                <TableCell className="px-4 py-3">
+                  {pos.grade ? (
+                    <Badge variant="secondary">{pos.grade}</Badge>
                   ) : (
-                    <span className="text-xs text-outline">-</span>
+                    <span className="text-xs text-muted-foreground">—</span>
                   )}
-                </td>
-                <td className="px-6 py-5">
-                  <span className="inline-flex px-3 py-1 bg-surface-container-high rounded-full text-xs font-bold text-on-surface-variant">
+                </TableCell>
+                <TableCell className="px-4 py-3">
+                  <span className="text-sm tabular-nums text-muted-foreground">
                     {pos.employee_count} karyawan
                   </span>
-                </td>
-                <td className="px-8 py-5 text-right">
-                  <div className="flex items-center justify-end gap-2">
-                    <button
+                </TableCell>
+                <TableCell className="px-4 py-3 text-right">
+                  <div className="flex items-center justify-end gap-1">
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
                       onClick={() => onEdit(pos)}
-                      className="p-2 text-outline hover:text-primary hover:bg-primary/5 rounded-xl transition-all"
-                      title="Edit"
+                      aria-label={`Edit jabatan ${pos.title}`}
                     >
-                      <Pencil size={18} />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(pos)}
-                      disabled={deletingId === pos.id}
-                      className="p-2 text-outline hover:text-error hover:bg-error/5 rounded-xl transition-all disabled:opacity-50"
-                      title="Hapus"
+                      <Pencil />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      onClick={() => handleDeleteClick(pos)}
+                      className="text-muted-foreground hover:text-destructive"
+                      aria-label={`Hapus jabatan ${pos.title}`}
                     >
-                      {deletingId === pos.id ? (
-                        <Loader2 size={18} className="animate-spin" />
-                      ) : (
-                        <Trash2 size={18} />
-                      )}
-                    </button>
+                      <Trash2 />
+                    </Button>
                   </div>
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
-    </div>
+
+      <AlertDialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => {
+          if (!open) setDeleteTarget(null)
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Hapus Jabatan?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {deleteTarget && deleteTarget.employee_count > 0 ? (
+                <>
+                  Jabatan &ldquo;{deleteTarget.title}&rdquo; tidak dapat dihapus
+                  karena masih memiliki{" "}
+                  <span className="font-medium text-foreground">
+                    {deleteTarget.employee_count} karyawan
+                  </span>{" "}
+                  yang terkait. Pindahkan atau hapus karyawan terlebih dahulu.
+                </>
+              ) : (
+                <>
+                  Jabatan &ldquo;{deleteTarget?.title}&rdquo; akan dihapus
+                  secara permanen. Tindakan ini tidak dapat dibatalkan.
+                </>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting}>
+              {deleteTarget && deleteTarget.employee_count > 0
+                ? "Tutup"
+                : "Batal"}
+            </AlertDialogCancel>
+            {deleteTarget && deleteTarget.employee_count === 0 && (
+              <AlertDialogAction
+                onClick={(e) => {
+                  e.preventDefault()
+                  confirmDelete()
+                }}
+                disabled={deleting}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                {deleting ? (
+                  <>
+                    <Spinner data-icon="inline-start" />
+                    Menghapus...
+                  </>
+                ) : (
+                  "Hapus"
+                )}
+              </AlertDialogAction>
+            )}
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   )
 }

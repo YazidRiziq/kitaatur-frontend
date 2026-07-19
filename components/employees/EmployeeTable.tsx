@@ -1,8 +1,27 @@
 "use client"
 
-import Image from "next/image"
-import { ChevronLeft, ChevronRight, Eye, Loader2 } from "lucide-react"
+import { Eye, Users } from "lucide-react"
 import type { Employee, PaginatedResponse } from "@/lib/employees/types"
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Skeleton } from "@/components/ui/skeleton"
+import {
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+  EmptyDescription,
+} from "@/components/ui/empty"
+import { TablePagination } from "./TablePagination"
 
 interface EmployeeTableProps {
   data: Employee[]
@@ -12,7 +31,6 @@ interface EmployeeTableProps {
   onDetail?: (employee: Employee) => void
 }
 
-// Komponen untuk menampilkan tabel karyawan aktif
 export function EmployeeTable({
   data,
   loading,
@@ -22,153 +40,165 @@ export function EmployeeTable({
 }: EmployeeTableProps) {
   if (loading) {
     return (
-      <div className="bg-surface-container-lowest rounded-3xl shadow-sm border border-emerald-50/20 p-12 flex items-center justify-center">
-        <Loader2 size={32} className="animate-spin text-primary" />
+      <div className="rounded-lg border border-border overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-muted/50">
+              <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Karyawan
+              </TableHead>
+              <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Email
+              </TableHead>
+              <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                NIK
+              </TableHead>
+              <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Departemen
+              </TableHead>
+              <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Jabatan
+              </TableHead>
+              <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground text-center">
+                Aksi
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <TableRow key={i}>
+                <TableCell className="px-4 py-3">
+                  <div className="flex items-center gap-3">
+                    <Skeleton className="size-8 rounded-full" />
+                    <div className="space-y-1">
+                      <Skeleton className="h-4 w-28" />
+                      <Skeleton className="h-3 w-20" />
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell className="px-4 py-3">
+                  <Skeleton className="h-4 w-36" />
+                </TableCell>
+                <TableCell className="px-4 py-3">
+                  <Skeleton className="h-4 w-16" />
+                </TableCell>
+                <TableCell className="px-4 py-3">
+                  <Skeleton className="h-5 w-20 rounded-full" />
+                </TableCell>
+                <TableCell className="px-4 py-3">
+                  <Skeleton className="h-4 w-24" />
+                </TableCell>
+                <TableCell className="px-4 py-3 text-center">
+                  <Skeleton className="h-7 w-16 mx-auto rounded-md" />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
     )
   }
 
   if (!data || data.length === 0) {
     return (
-      <div className="bg-surface-container-lowest rounded-3xl shadow-sm border border-emerald-50/20 p-12 text-center">
-        <p className="text-on-surface-variant text-sm">Belum ada karyawan yang bergabung.</p>
-        <p className="text-outline text-xs mt-1">Undang karyawan melalui tombol Tambah Karyawan di atas.</p>
+      <div className="rounded-lg border border-border">
+        <Empty className="py-16">
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <Users />
+            </EmptyMedia>
+            <EmptyTitle>Belum ada karyawan</EmptyTitle>
+            <EmptyDescription>
+              Undang karyawan melalui tombol Tambah Karyawan di atas.
+            </EmptyDescription>
+          </EmptyHeader>
+        </Empty>
       </div>
     )
   }
 
   return (
-    <div className="bg-surface-container-lowest rounded-3xl shadow-sm border border-emerald-50/20 overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="text-outline text-[11px] uppercase tracking-widest font-bold border-b border-surface-variant/30">
-              <th className="px-8 py-4">Karyawan</th>
-              <th className="px-6 py-4">Email</th>
-              <th className="px-6 py-4">NIK</th>
-              <th className="px-6 py-4">Departemen</th>
-              <th className="px-6 py-4">Jabatan</th>
-              <th className="px-6 py-4 text-center">Aksi</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-surface-variant/10">
-            {data.map((employee) => (
-              <tr
-                key={employee.id}
-                className="hover:bg-surface-container-low/50 transition-colors group"
-              >
-                <td className="px-8 py-5">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 relative rounded-full overflow-hidden bg-surface-container">
-                      {employee.avatar_url ? (
-                        <Image
-                          src={employee.avatar_url}
-                          alt={employee.name}
-                          fill
-                          className="object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-primary/10 text-primary font-semibold text-sm">
-                          {employee.name.charAt(0).toUpperCase()}
-                        </div>
-                      )}
-                    </div>
-                    <div>
-                      <p className="font-semibold text-on-surface text-sm">
-                        {employee.name}
+    <div className="rounded-lg border border-border overflow-hidden">
+      <Table>
+        <TableHeader>
+          <TableRow className="bg-muted/50">
+            <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              Karyawan
+            </TableHead>
+            <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              Email
+            </TableHead>
+            <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              NIK
+            </TableHead>
+            <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              Departemen
+            </TableHead>
+            <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              Jabatan
+            </TableHead>
+            <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground text-center">
+              Aksi
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {data.map((employee) => (
+            <TableRow key={employee.id}>
+              <TableCell className="px-4 py-3">
+                <div className="flex items-center gap-3">
+                  <Avatar>
+                    {employee.avatar_url ? (
+                      <AvatarImage
+                        src={employee.avatar_url}
+                        alt={employee.name}
+                      />
+                    ) : null}
+                    <AvatarFallback>
+                      {employee.name.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="text-sm font-medium text-foreground">
+                      {employee.name}
+                    </p>
+                    {employee.phone && (
+                      <p className="text-xs text-muted-foreground">
+                        {employee.phone}
                       </p>
-                      {employee.phone && (
-                        <p className="text-xs text-outline font-medium">
-                          {employee.phone}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </td>
-                <td className="px-6 py-5 text-sm text-on-surface-variant">
-                  {employee.email}
-                </td>
-                <td className="px-6 py-5 text-sm text-on-surface-variant">
-                  {employee.employee_number || "-"}
-                </td>
-                <td className="px-6 py-5">
-                  <span className="inline-flex px-3 py-1 bg-surface-container-high rounded-full text-xs font-bold text-on-surface-variant">
-                    {employee.department.name}
-                  </span>
-                </td>
-                <td className="px-6 py-5 text-sm text-on-surface-variant">
-                  {employee.position.title || "-"}
-                </td>
-                <td className="px-8 py-5 text-center">
-                  <button
-                    type="button"
-                    onClick={() => onDetail?.(employee)}
-                    disabled={!onDetail}
-                    className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-primary bg-primary/5 hover:bg-primary/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                    title="Lihat detail karyawan"
-                  >
-                    <Eye size={15} />
-                    Detail
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {pagination && pagination.totalPages > 1 && (
-        <div className="p-6 flex items-center justify-between border-t border-surface-variant/20">
-          <p className="text-xs font-medium text-outline">
-            Menampilkan {(pagination.page - 1) * pagination.limit + 1}-
-            {Math.min(pagination.page * pagination.limit, pagination.total)} dari{" "}
-            {pagination.total} data
-          </p>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => onPageChange(pagination.page - 1)}
-              disabled={pagination.page <= 1}
-              className="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant/30 text-outline hover:border-primary hover:text-primary transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              <ChevronLeft size={16} />
-            </button>
-            {Array.from({ length: pagination.totalPages }, (_, i) => i + 1)
-              .filter((p) => {
-                if (pagination.totalPages <= 5) return true
-                if (p === 1 || p === pagination.totalPages) return true
-                if (Math.abs(p - pagination.page) <= 1) return true
-                return false
-              })
-              .map((p, idx, arr) => {
-                const showEllipsis =
-                  idx > 0 && p - arr[idx - 1] > 1
-                return (
-                  <div key={p} className="flex items-center gap-2">
-                    {showEllipsis && (
-                      <span className="text-outline text-xs px-1">...</span>
                     )}
-                    <button
-                      onClick={() => onPageChange(p)}
-                      className={`w-8 h-8 flex items-center justify-center rounded-lg text-xs font-bold transition-all ${
-                        p === pagination.page
-                          ? "bg-primary text-on-primary"
-                          : "border border-outline-variant/30 text-outline hover:border-primary hover:text-primary"
-                      }`}
-                    >
-                      {p}
-                    </button>
                   </div>
-                )
-              })}
-            <button
-              onClick={() => onPageChange(pagination.page + 1)}
-              disabled={pagination.page >= pagination.totalPages}
-              className="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant/30 text-outline hover:border-primary hover:text-primary transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              <ChevronRight size={16} />
-            </button>
-          </div>
-        </div>
+                </div>
+              </TableCell>
+              <TableCell className="px-4 py-3 text-sm text-muted-foreground">
+                {employee.email}
+              </TableCell>
+              <TableCell className="px-4 py-3 text-sm text-muted-foreground">
+                {employee.employee_number || "—"}
+              </TableCell>
+              <TableCell className="px-4 py-3">
+                <Badge variant="secondary">{employee.department.name}</Badge>
+              </TableCell>
+              <TableCell className="px-4 py-3 text-sm text-muted-foreground">
+                {employee.position.title || "—"}
+              </TableCell>
+              <TableCell className="px-4 py-3 text-center">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onDetail?.(employee)}
+                  disabled={!onDetail}
+                >
+                  <Eye className="size-4" />
+                  Detail
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+      {pagination && (
+        <TablePagination pagination={pagination} onPageChange={onPageChange} />
       )}
     </div>
   )

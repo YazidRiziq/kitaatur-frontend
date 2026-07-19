@@ -1,10 +1,40 @@
 "use client"
 
 import { useState } from "react"
-import { Loader2, RefreshCw, X, Copy, Check, ChevronLeft, ChevronRight } from "lucide-react"
+import { RefreshCw, X, Copy, Check, Clock } from "lucide-react"
 import type { PendingInvitation, PaginatedResponse } from "@/lib/employees/types"
 import { resendInvitation, revokeInvitation } from "@/lib/employees/actions"
 import { toast } from "sonner"
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog"
+import {
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+  EmptyDescription,
+} from "@/components/ui/empty"
+import { Skeleton } from "@/components/ui/skeleton"
+import { Spinner } from "@/components/ui/spinner"
+import { TablePagination } from "./TablePagination"
 
 interface PendingInvitationTableProps {
   data: PendingInvitation[]
@@ -24,6 +54,7 @@ export function PendingInvitationTable({
   const [resendingId, setResendingId] = useState<string | null>(null)
   const [revokingId, setRevokingId] = useState<string | null>(null)
   const [copiedCode, setCopiedCode] = useState<string | null>(null)
+  const [revokeTarget, setRevokeTarget] = useState<PendingInvitation | null>(null)
 
   async function handleResend(id: string, name: string) {
     setResendingId(id)
@@ -42,13 +73,13 @@ export function PendingInvitationTable({
     }
   }
 
-  async function handleRevoke(id: string, name: string) {
-    if (!confirm(`Batalkan undangan untuk ${name}?`)) return
+  async function confirmRevoke() {
+    if (!revokeTarget) return
 
-    setRevokingId(id)
+    setRevokingId(revokeTarget.id)
     try {
-      await revokeInvitation(id)
-      toast.success(`Undangan ${name} dibatalkan`)
+      await revokeInvitation(revokeTarget.id)
+      toast.success(`Undangan ${revokeTarget.name} dibatalkan`)
       onRefresh()
     } catch (error) {
       toast.error(
@@ -56,6 +87,7 @@ export function PendingInvitationTable({
       )
     } finally {
       setRevokingId(null)
+      setRevokeTarget(null)
     }
   }
 
@@ -70,7 +102,6 @@ export function PendingInvitationTable({
     }
   }
 
-  // Fungsi untuk memformat tanggal kadaluarsa undangan dengan informasi tambahan seperti "Kadaluarsa", "Hari ini", "Besok", atau jumlah hari tersisa
   function formatExpiry(dateStr: string): string {
     const date = new Date(dateStr)
     const now = new Date()
@@ -91,172 +122,214 @@ export function PendingInvitationTable({
 
   if (loading) {
     return (
-      <div className="bg-surface-container-lowest rounded-3xl shadow-sm border border-emerald-50/20 p-12 flex items-center justify-center">
-        <Loader2 size={32} className="animate-spin text-primary" />
+      <div className="rounded-lg border border-border overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-muted/50">
+              <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Nama
+              </TableHead>
+              <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Email
+              </TableHead>
+              <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Kode Undangan
+              </TableHead>
+              <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Berlaku Sampai
+              </TableHead>
+              <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground text-right">
+                Aksi
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {Array.from({ length: 3 }).map((_, i) => (
+              <TableRow key={i}>
+                <TableCell className="px-4 py-3">
+                  <Skeleton className="h-4 w-28" />
+                </TableCell>
+                <TableCell className="px-4 py-3">
+                  <Skeleton className="h-4 w-36" />
+                </TableCell>
+                <TableCell className="px-4 py-3">
+                  <Skeleton className="h-5 w-24 rounded-full" />
+                </TableCell>
+                <TableCell className="px-4 py-3">
+                  <Skeleton className="h-4 w-32" />
+                </TableCell>
+                <TableCell className="px-4 py-3 text-right">
+                  <div className="flex items-center justify-end gap-1">
+                    <Skeleton className="size-7 rounded-md" />
+                    <Skeleton className="size-7 rounded-md" />
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
     )
   }
 
   if (!data || data.length === 0) {
     return (
-      <div className="bg-surface-container-lowest rounded-3xl shadow-sm border border-emerald-50/20 p-12 text-center">
-        <p className="text-on-surface-variant text-sm">
-          Tidak ada undangan tertunda.
-        </p>
-        <p className="text-outline text-xs mt-1">
-          Semua undangan sudah diterima atau belum ada yang diundang.
-        </p>
+      <div className="rounded-lg border border-border">
+        <Empty className="py-16">
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <Clock />
+            </EmptyMedia>
+            <EmptyTitle>Tidak ada undangan tertunda</EmptyTitle>
+            <EmptyDescription>
+              Semua undangan sudah diterima atau belum ada yang diundang.
+            </EmptyDescription>
+          </EmptyHeader>
+        </Empty>
       </div>
     )
   }
 
   return (
-    <div className="bg-surface-container-lowest rounded-3xl shadow-sm border border-emerald-50/20 overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="text-outline text-[11px] uppercase tracking-widest font-bold border-b border-surface-variant/30">
-              <th className="px-8 py-4">Nama</th>
-              <th className="px-6 py-4">Email</th>
-              <th className="px-6 py-4">Kode Undangan</th>
-              <th className="px-6 py-4">Berlaku Sampai</th>
-              <th className="px-8 py-4 text-right">Aksi</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-surface-variant/10">
+    <>
+      <div className="rounded-lg border border-border overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-muted/50">
+              <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Nama
+              </TableHead>
+              <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Email
+              </TableHead>
+              <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Kode Undangan
+              </TableHead>
+              <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Berlaku Sampai
+              </TableHead>
+              <TableHead className="h-11 px-4 text-xs font-medium uppercase tracking-wider text-muted-foreground text-right">
+                Aksi
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {data.map((invitation) => (
-              <tr
-                key={invitation.id}
-                className="hover:bg-surface-container-low/50 transition-colors group"
-              >
-                <td className="px-8 py-5">
-                  <p className="font-semibold text-on-surface text-sm">
+              <TableRow key={invitation.id}>
+                <TableCell className="px-4 py-3">
+                  <span className="text-sm font-medium text-foreground">
                     {invitation.name}
-                  </p>
-                </td>
-                <td className="px-6 py-5 text-sm text-on-surface-variant">
+                  </span>
+                </TableCell>
+                <TableCell className="px-4 py-3 text-sm text-muted-foreground">
                   {invitation.email}
-                </td>
-                <td className="px-6 py-5">
+                </TableCell>
+                <TableCell className="px-4 py-3">
                   <div className="flex items-center gap-2">
-                    <code className="px-2.5 py-1 bg-amber-50 text-amber-700 rounded-lg text-xs font-mono font-bold tracking-wider">
+                    <Badge variant="outline" className="font-mono tracking-wider">
                       {invitation.invitation_token}
-                    </code>
-                    <button
+                    </Badge>
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
                       onClick={() => handleCopyCode(invitation.invitation_token)}
-                      className="p-1 text-outline hover:text-primary transition-colors"
-                      title="Salin kode"
+                      aria-label="Salin kode undangan"
                     >
                       {copiedCode === invitation.invitation_token ? (
-                        <Check size={14} className="text-primary" />
+                        <Check className="text-primary" />
                       ) : (
-                        <Copy size={14} />
+                        <Copy />
                       )}
-                    </button>
+                    </Button>
                   </div>
-                </td>
-                <td className="px-6 py-5">
+                </TableCell>
+                <TableCell className="px-4 py-3">
                   <span
                     className={`text-xs font-medium ${
                       new Date(invitation.invitation_expires_at) < new Date()
-                        ? "text-error"
-                        : "text-on-surface-variant"
+                        ? "text-destructive"
+                        : "text-muted-foreground"
                     }`}
                   >
                     {formatExpiry(invitation.invitation_expires_at)}
                   </span>
-                </td>
-                <td className="px-8 py-5 text-right">
-                  <div className="flex items-center justify-end gap-2">
-                    <button
-                      onClick={() =>
-                        handleResend(invitation.id, invitation.name)
-                      }
+                </TableCell>
+                <TableCell className="px-4 py-3 text-right">
+                  <div className="flex items-center justify-end gap-1">
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      onClick={() => handleResend(invitation.id, invitation.name)}
                       disabled={resendingId === invitation.id}
-                      className="p-2 text-outline hover:text-primary hover:bg-primary/5 rounded-xl transition-all disabled:opacity-50"
-                      title="Kirim ulang"
+                      aria-label={`Kirim ulang undangan ${invitation.name}`}
                     >
                       {resendingId === invitation.id ? (
-                        <Loader2 size={18} className="animate-spin" />
+                        <Spinner />
                       ) : (
-                        <RefreshCw size={18} />
+                        <RefreshCw />
                       )}
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleRevoke(invitation.id, invitation.name)
-                      }
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      onClick={() => setRevokeTarget(invitation)}
                       disabled={revokingId === invitation.id}
-                      className="p-2 text-outline hover:text-error hover:bg-error/5 rounded-xl transition-all disabled:opacity-50"
-                      title="Batalkan"
+                      className="text-muted-foreground hover:text-destructive"
+                      aria-label={`Batalkan undangan ${invitation.name}`}
                     >
                       {revokingId === invitation.id ? (
-                        <Loader2 size={18} className="animate-spin" />
+                        <Spinner />
                       ) : (
-                        <X size={18} />
+                        <X />
                       )}
-                    </button>
+                    </Button>
                   </div>
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
+        {pagination && (
+          <TablePagination pagination={pagination} onPageChange={onPageChange} />
+        )}
       </div>
 
-      {pagination && pagination.totalPages > 1 && (
-        <div className="p-6 flex items-center justify-between border-t border-surface-variant/20">
-          <p className="text-xs font-medium text-outline">
-            Menampilkan {(pagination.page - 1) * pagination.limit + 1}-
-            {Math.min(pagination.page * pagination.limit, pagination.total)} dari{" "}
-            {pagination.total} data
-          </p>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => onPageChange(pagination.page - 1)}
-              disabled={pagination.page <= 1}
-              className="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant/30 text-outline hover:border-primary hover:text-primary transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+      <AlertDialog
+        open={!!revokeTarget}
+        onOpenChange={(open) => {
+          if (!open) setRevokeTarget(null)
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Batalkan Undangan?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Undangan untuk &ldquo;{revokeTarget?.name}&rdquo; akan dibatalkan.
+              Tindakan ini tidak dapat dibatalkan.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={!!revokingId}>Batal</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault()
+                confirmRevoke()
+              }}
+              disabled={!!revokingId}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              <ChevronLeft size={16} />
-            </button>
-            {Array.from({ length: pagination.totalPages }, (_, i) => i + 1)
-              .filter((p) => {
-                if (pagination.totalPages <= 5) return true
-                if (p === 1 || p === pagination.totalPages) return true
-                if (Math.abs(p - pagination.page) <= 1) return true
-                return false
-              })
-              .map((p, idx, arr) => {
-                const showEllipsis =
-                  idx > 0 && p - arr[idx - 1] > 1
-                return (
-                  <div key={p} className="flex items-center gap-2">
-                    {showEllipsis && (
-                      <span className="text-outline text-xs px-1">...</span>
-                    )}
-                    <button
-                      onClick={() => onPageChange(p)}
-                      className={`w-8 h-8 flex items-center justify-center rounded-lg text-xs font-bold transition-all ${
-                        p === pagination.page
-                          ? "bg-primary text-on-primary"
-                          : "border border-outline-variant/30 text-outline hover:border-primary hover:text-primary"
-                      }`}
-                    >
-                      {p}
-                    </button>
-                  </div>
-                )
-              })}
-            <button
-              onClick={() => onPageChange(pagination.page + 1)}
-              disabled={pagination.page >= pagination.totalPages}
-              className="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant/30 text-outline hover:border-primary hover:text-primary transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              <ChevronRight size={16} />
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
+              {revokingId ? (
+                <>
+                  <Spinner data-icon="inline-start" />
+                  Membatalkan...
+                </>
+              ) : (
+                "Batalkan Undangan"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   )
 }

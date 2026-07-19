@@ -61,7 +61,10 @@ export async function updateSettings(
     throw new Error(body?.message || "Gagal memperbarui pengaturan")
   }
 
-  const updated: UpdateCompanySettingsResponse = await response.json()
+  const text = await response.text()
+  const updated: UpdateCompanySettingsResponse = text
+    ? JSON.parse(text)
+    : { message: "OK", data: { ...input } as unknown as CompanySettings }
 
   await refreshDashboardCookie(input)
 

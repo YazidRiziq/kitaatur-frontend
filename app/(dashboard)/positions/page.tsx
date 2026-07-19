@@ -1,18 +1,20 @@
 "use client"
-/* eslint-disable react-hooks/set-state-in-effect */
 
 import { useState, useEffect, useCallback } from "react"
-import { Plus } from "lucide-react"
+import { SearchIcon, Plus } from "lucide-react"
 import { getPositions } from "@/lib/positions/actions"
 import type { Position } from "@/lib/positions/types"
 import { PositionTable } from "@/components/positions/PositionTable"
 import { PositionSheet } from "@/components/positions/PositionSheet"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 
 export default function PositionsPage() {
   const [positions, setPositions] = useState<Position[]>([])
   const [loading, setLoading] = useState(true)
   const [sheetOpen, setSheetOpen] = useState(false)
   const [editPosition, setEditPosition] = useState<Position | null>(null)
+  const [search, setSearch] = useState("")
 
   const fetchPositions = useCallback(() => {
     setLoading(true)
@@ -43,36 +45,49 @@ export default function PositionsPage() {
     fetchPositions()
   }
 
+  const filtered = search
+    ? positions.filter(
+        (p) =>
+          p.title.toLowerCase().includes(search.toLowerCase()) ||
+          (p.grade && p.grade.toLowerCase().includes(search.toLowerCase()))
+      )
+    : positions
+
   return (
-    <div className="pl-8 pr-8 flex-1">
-      <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="font-headline tracking-tight text-3xl font-bold text-on-surface">
+          <h1 className="text-[1.75rem] leading-tight font-medium tracking-[-0.42px] text-foreground">
             Jabatan
-          </h2>
-          <p className="text-on-surface-variant mt-1">
+          </h1>
+          <p className="text-sm text-muted-foreground">
             Kelola data jabatan di perusahaan.
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={handleAdd}
-            className="bg-primary text-white px-6 py-2.5 rounded-3xl font-semibold shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition-all active:scale-95"
-          >
-            <Plus size={20} />
-            Tambah Jabatan
-          </button>
-        </div>
       </div>
 
-      <div className="flex flex-col gap-8">
-        <PositionTable
-          data={positions}
-          loading={loading}
-          onEdit={handleEdit}
-          onRefresh={fetchPositions}
-        />
+      <div className="flex items-center gap-3">
+        <div className="relative flex-1 min-w-48 max-w-xs">
+          <SearchIcon className="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Cari jabatan..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-9"
+          />
+        </div>
+        <Button onClick={handleAdd} className="ml-auto">
+          <Plus data-icon="inline-start" />
+          Tambah Jabatan
+        </Button>
       </div>
+
+      <PositionTable
+        data={filtered}
+        loading={loading}
+        onEdit={handleEdit}
+        onRefresh={fetchPositions}
+      />
 
       <PositionSheet
         open={sheetOpen}
