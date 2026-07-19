@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from "react"
 import dynamic from "next/dynamic"
-import { Loader2, MapPin, Save, RotateCcw, Plus } from "lucide-react"
+import { MapPin, Save, RotateCcw, Plus } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Slider } from "@/components/ui/slider"
+import { Spinner } from "@/components/ui/spinner"
 import { AddressSearch } from "@/components/settings/AddressSearch"
 import {
   updateEmployeeWorkLocation,
@@ -25,8 +27,8 @@ const OfficeMap = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="flex items-center justify-center h-[280px] rounded-2xl border border-surface-variant/30 bg-surface-container-low">
-        <Loader2 size={24} className="animate-spin text-primary" />
+      <div className="flex items-center justify-center h-[280px] rounded-lg border border-border bg-muted/30">
+        <Spinner className="size-6" />
       </div>
     ),
   }
@@ -158,23 +160,21 @@ export function WorkLocationEditor({
     if (currentLocation) {
       return (
         <div className="space-y-4">
-          <div className="rounded-2xl border border-surface-variant/20 bg-surface-container-low p-4">
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex items-start gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                  <MapPin size={16} />
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-on-surface">
-                    {currentLocation.label}
-                  </p>
-                  <p className="text-xs text-on-surface-variant mt-0.5">
-                    {currentLocation.lat.toFixed(6)}, {currentLocation.lng.toFixed(6)}
-                  </p>
-                  <p className="text-xs text-on-surface-variant">
-                    Radius: {currentLocation.radiusMeters}m
-                  </p>
-                </div>
+          <div className="rounded-lg border border-border p-4">
+            <div className="flex items-start gap-3">
+              <div className="flex size-9 shrink-0 items-center justify-center rounded-sm bg-primary/10 text-primary">
+                <MapPin className="size-4" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-foreground">
+                  {currentLocation.label}
+                </p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {currentLocation.lat.toFixed(6)}, {currentLocation.lng.toFixed(6)}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Radius: {currentLocation.radiusMeters}m
+                </p>
               </div>
             </div>
           </div>
@@ -183,17 +183,15 @@ export function WorkLocationEditor({
               type="button"
               variant="outline"
               size="sm"
-              className="rounded-xl"
               onClick={handleReset}
               disabled={saving}
             >
-              <RotateCcw size={14} />
+              <RotateCcw className="size-3.5" />
               Reset ke Default
             </Button>
             <Button
               type="button"
               size="sm"
-              className="rounded-xl"
               onClick={startEdit}
             >
               Ubah Lokasi
@@ -205,11 +203,11 @@ export function WorkLocationEditor({
 
     return (
       <div className="space-y-3">
-        <div className="rounded-2xl border border-dashed border-surface-variant/40 bg-surface-container-low/50 p-4 text-center">
-          <p className="text-sm text-on-surface-variant">
+        <div className="rounded-lg border border-dashed border-border p-4 text-center">
+          <p className="text-sm text-muted-foreground">
             Menggunakan lokasi default kantor
           </p>
-          <p className="text-xs text-on-surface-variant mt-1">
+          <p className="text-xs text-muted-foreground mt-1">
             Karyawan ini belum punya lokasi kerja khusus
           </p>
         </div>
@@ -217,10 +215,9 @@ export function WorkLocationEditor({
           <Button
             type="button"
             size="sm"
-            className="rounded-xl"
             onClick={startEdit}
           >
-            <Plus size={14} />
+            <Plus className="size-3.5" />
             Atur Lokasi Khusus
           </Button>
         </div>
@@ -230,33 +227,28 @@ export function WorkLocationEditor({
 
   return (
     <div className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="work-location-label" className="text-xs font-semibold text-on-surface-variant">
-          Nama Lokasi <span className="text-error">*</span>
+      <div className="space-y-1.5">
+        <Label htmlFor="work-location-label">
+          Nama Lokasi <span className="text-destructive">*</span>
         </Label>
         <Input
           id="work-location-label"
           value={label}
           onChange={(e) => setLabel(e.target.value)}
           placeholder="Mis. Proyek Cluster A, Kantor Cabang"
-          className="h-10 rounded-xl bg-surface-container-low"
         />
       </div>
 
-      <div className="space-y-2">
-        <Label className="text-xs font-semibold text-on-surface-variant">
-          Cari Alamat
-        </Label>
+      <div className="space-y-1.5">
+        <Label>Cari Alamat</Label>
         <AddressSearch
           onSelect={handleAddressSelect}
           placeholder="Cari lokasi proyek..."
         />
       </div>
 
-      <div className="space-y-2">
-        <Label className="text-xs font-semibold text-on-surface-variant">
-          Pin Lokasi (klik peta atau seret pin)
-        </Label>
+      <div className="space-y-1.5">
+        <Label>Pin Lokasi (klik peta atau seret pin)</Label>
         <OfficeMap
           location={geo}
           onChange={handleMapChange}
@@ -267,22 +259,17 @@ export function WorkLocationEditor({
 
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <Label htmlFor="work-radius" className="text-xs font-semibold text-on-surface-variant">
-            Radius Toleransi
-          </Label>
-          <span className="text-sm font-bold text-primary">
+          <Label htmlFor="work-radius">Radius Toleransi</Label>
+          <span className="text-sm font-medium text-primary">
             {geo?.radiusMeters ?? DEFAULT_RADIUS_METERS}m
           </span>
         </div>
-        <input
-          id="work-radius"
-          type="range"
+        <Slider
+          value={[geo?.radiusMeters ?? DEFAULT_RADIUS_METERS]}
           min={MIN_RADIUS_METERS}
           max={MAX_RADIUS_METERS}
           step={10}
-          value={geo?.radiusMeters ?? DEFAULT_RADIUS_METERS}
-          onChange={(e) => handleRadiusChange(parseInt(e.target.value, 10))}
-          className="w-full accent-primary"
+          onValueChange={([val]) => handleRadiusChange(val)}
         />
       </div>
 
@@ -291,7 +278,6 @@ export function WorkLocationEditor({
           type="button"
           variant="outline"
           size="sm"
-          className="rounded-xl"
           onClick={cancelEdit}
           disabled={saving}
         >
@@ -300,18 +286,17 @@ export function WorkLocationEditor({
         <Button
           type="button"
           size="sm"
-          className="rounded-xl"
           onClick={handleSave}
           disabled={saving || !geo || !label.trim()}
         >
           {saving ? (
             <>
-              <Loader2 size={14} className="animate-spin" />
+              <Spinner data-icon="inline-start" />
               Menyimpan...
             </>
           ) : (
             <>
-              <Save size={14} />
+              <Save className="size-3.5" />
               Simpan
             </>
           )}

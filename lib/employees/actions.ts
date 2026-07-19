@@ -218,11 +218,31 @@ export async function updateEmployeeWorkLocation(
     throw new Error(body?.message || "Gagal memperbarui lokasi kerja karyawan")
   }
 
-  return response.json()
+  const text = await response.text()
+  if (!text) {
+    return { message: "OK", data: { id, workLocation: input } } as UpdateWorkLocationResponse
+  }
+  return JSON.parse(text) as UpdateWorkLocationResponse
 }
 
 export async function resetEmployeeWorkLocation(
   id: string
 ): Promise<UpdateWorkLocationResponse> {
-  return updateEmployeeWorkLocation(id, null)
+  const token = await getAccessToken()
+
+  const response = await fetch(apiUrl(`/employees/${id}/work-location`), {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  })
+
+  if (!response.ok) {
+    const body = await response.json().catch(() => null)
+    throw new Error(body?.message || "Gagal mereset lokasi kerja karyawan")
+  }
+
+  const text = await response.text()
+  if (!text) {
+    return { message: "OK", data: { id, workLocation: null } }
+  }
+  return JSON.parse(text) as UpdateWorkLocationResponse
 }

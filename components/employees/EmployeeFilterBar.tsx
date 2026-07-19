@@ -1,6 +1,14 @@
 "use client"
 
-import { Search } from "lucide-react"
+import { SearchIcon } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import type { Department } from "@/lib/departments/types"
 import type { Position } from "@/lib/positions/types"
 
@@ -13,8 +21,6 @@ interface EmployeeFilterBarProps {
   onPositionChange: (value: string) => void
   departments: Department[]
   positions: Position[]
-  loadingDepartments: boolean
-  loadingPositions: boolean
 }
 
 export function EmployeeFilterBar({
@@ -26,53 +32,50 @@ export function EmployeeFilterBar({
   onPositionChange,
   departments,
   positions,
-  loadingDepartments,
-  loadingPositions,
 }: EmployeeFilterBarProps) {
   return (
-    <div className="bg-surface-container-lowest p-4 rounded-3xl shadow-sm flex flex-wrap items-center gap-4 border border-emerald-50/20">
-      <div className="flex-1 min-w-50 relative">
-        <Search
-          size={18}
-          className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-        />
-        <input
-          className="w-full bg-surface-container-low border-none rounded-2xl py-2.5 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary/20 outline-none"
+    <>
+      <div className="relative flex-1 min-w-48 max-w-xs">
+        <SearchIcon className="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+        <Input
           placeholder="Cari nama atau email..."
-          type="text"
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
+          className="pl-9"
         />
       </div>
-      <div className="flex items-center gap-2">
-        <select
-          className="bg-surface-container-low border-none rounded-2xl py-2.5 px-4 text-sm font-medium text-on-surface focus:ring-2 focus:ring-primary/20 cursor-pointer outline-none disabled:opacity-50"
-          value={departmentId}
-          onChange={(e) => onDepartmentChange(e.target.value)}
-          disabled={loadingDepartments}
-        >
-          <option value="">Semua Departemen</option>
+      <Select
+        value={departmentId || "__all__"}
+        onValueChange={(val) => onDepartmentChange(val === "__all__" ? "" : val)}
+      >
+        <SelectTrigger className="w-auto min-w-44 gap-2">
+          <SelectValue placeholder="Semua Departemen" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="__all__">Semua Departemen</SelectItem>
           {departments.map((dept) => (
-            <option key={dept.id} value={dept.id}>
+            <SelectItem key={dept.id} value={dept.id}>
               {dept.name}
-            </option>
+            </SelectItem>
           ))}
-        </select>
-
-        <select
-          className="bg-surface-container-low border-none rounded-2xl py-2.5 px-4 text-sm font-medium text-on-surface focus:ring-2 focus:ring-primary/20 cursor-pointer outline-none disabled:opacity-50"
-          value={positionId}
-          onChange={(e) => onPositionChange(e.target.value)}
-          disabled={loadingPositions}
-        >
-          <option value="">Semua Jabatan</option>
+        </SelectContent>
+      </Select>
+      <Select
+        value={positionId || "__all__"}
+        onValueChange={(val) => onPositionChange(val === "__all__" ? "" : val)}
+      >
+        <SelectTrigger className="w-auto min-w-36 gap-2">
+          <SelectValue placeholder="Semua Jabatan" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="__all__">Semua Jabatan</SelectItem>
           {positions.map((pos) => (
-            <option key={pos.id} value={pos.id}>
+            <SelectItem key={pos.id} value={pos.id}>
               {pos.title}
-            </option>
+            </SelectItem>
           ))}
-        </select>
-      </div>
-    </div>
+        </SelectContent>
+      </Select>
+    </>
   )
 }

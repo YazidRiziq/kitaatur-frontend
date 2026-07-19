@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Loader2, Briefcase } from "lucide-react"
 import {
   Sheet,
   SheetContent,
@@ -11,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Spinner } from "@/components/ui/spinner"
 import { createPosition, updatePosition } from "@/lib/positions/actions"
 import type { Position } from "@/lib/positions/types"
 import { toast } from "sonner"
@@ -81,10 +81,15 @@ export function PositionSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="w-full sm:max-w-md p-0">
         <div className="flex flex-col h-full">
-          <SheetHeader className="p-6 pb-4 border-b border-surface-variant/20">
-            <SheetTitle className="font-headline text-xl font-bold text-on-surface">
+          <SheetHeader className="p-6 pb-4 border-b border-border">
+            <SheetTitle className="text-lg font-medium text-foreground">
               {isEditing ? "Edit Jabatan" : "Tambah Jabatan"}
             </SheetTitle>
+            {isEditing && editPosition && editPosition.employee_count > 0 && (
+              <p className="text-xs text-muted-foreground">
+                {editPosition.employee_count} karyawan terkait jabatan ini
+              </p>
+            )}
           </SheetHeader>
 
           <form
@@ -92,64 +97,47 @@ export function PositionSheet({
             className="flex-1 overflow-y-auto p-6 space-y-5"
           >
             <div className="space-y-1.5">
-              <Label
-                htmlFor="positionTitle"
-                className="text-sm font-medium text-on-surface"
-              >
-                Nama Jabatan <span className="text-error">*</span>
+              <Label htmlFor="positionTitle">
+                Nama Jabatan <span className="text-destructive">*</span>
               </Label>
-              <div className="relative">
-                <Briefcase
-                  size={16}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                />
-                <Input
-                  id="positionTitle"
-                  placeholder="Senior Developer"
-                  value={title}
-                  onChange={(e) => {
-                    setTitle(e.target.value)
-                    setError("")
-                  }}
-                  className="pl-10 h-10 rounded-xl bg-surface-container-low border-none focus-visible:ring-2 focus-visible:ring-primary/20"
-                />
-              </div>
+              <Input
+                id="positionTitle"
+                placeholder="Senior Developer"
+                value={title}
+                onChange={(e) => {
+                  setTitle(e.target.value)
+                  setError("")
+                }}
+                autoFocus
+              />
               {error && (
-                <p className="text-xs text-error mt-1">{error}</p>
+                <p className="text-xs text-destructive">{error}</p>
               )}
             </div>
 
             <div className="space-y-1.5">
-              <Label
-                htmlFor="positionGrade"
-                className="text-sm font-medium text-on-surface"
-              >
-                Grade
-              </Label>
-              <div className="relative">
-                <Briefcase
-                  size={16}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                />
-                <Input
-                  id="positionGrade"
-                  placeholder="L3 (opsional)"
-                  value={grade}
-                  onChange={(e) => setGrade(e.target.value)}
-                  className="pl-10 h-10 rounded-xl bg-surface-container-low border-none focus-visible:ring-2 focus-visible:ring-primary/20"
-                />
-              </div>
+              <Label htmlFor="positionGrade">Grade</Label>
+              <Input
+                id="positionGrade"
+                placeholder="L3 (opsional)"
+                value={grade}
+                onChange={(e) => setGrade(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">
+                Tingkat level jabatan, contoh: L1, L2, M1
+              </p>
             </div>
 
             <div className="pt-2">
               <Button
                 type="submit"
                 disabled={submitting}
-                className="w-full h-11 rounded-xl bg-primary hover:bg-primary/90 font-semibold text-white"
+                size="lg"
+                className="w-full"
               >
                 {submitting ? (
                   <>
-                    <Loader2 size={18} className="animate-spin" />
+                    <Spinner data-icon="inline-start" />
                     Menyimpan...
                   </>
                 ) : (

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef, useCallback } from "react"
-import { UserPlus, Users, Clock } from "lucide-react"
+import { UserPlus } from "lucide-react"
 import { getActiveEmployees, getPendingInvitations } from "@/lib/employees/actions"
 import type {
   Employee,
@@ -12,6 +12,8 @@ import type { Department } from "@/lib/departments/types"
 import type { Position } from "@/lib/positions/types"
 import { getDepartments } from "@/lib/departments/actions"
 import { getPositions } from "@/lib/positions/actions"
+import { Button } from "@/components/ui/button"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { EmployeeFilterBar } from "@/components/employees/EmployeeFilterBar"
 import { EmployeeTable } from "@/components/employees/EmployeeTable"
 import { PendingInvitationTable } from "@/components/employees/PendingInvitationTable"
@@ -42,8 +44,6 @@ export default function EmployeesPage() {
 
   const [departments, setDepartments] = useState<Department[]>([])
   const [positions, setPositions] = useState<Position[]>([])
-  const [loadingDepartments, setLoadingDepartments] = useState(true)
-  const [loadingPositions, setLoadingPositions] = useState(true)
 
   // Debounce Search Timer
   const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -65,68 +65,58 @@ export default function EmployeesPage() {
 
   // Fetch Departments
   useEffect(() => {
-    let cancelled = false;
+    let cancelled = false
 
     const loadDepartments = async () => {
-      setLoadingDepartments(true);
       try {
-        const data = await getDepartments();
-        
+        const data = await getDepartments()
+
         if (!cancelled) {
-          setDepartments(data);
+          setDepartments(data)
         }
       } catch {
         if (!cancelled) {
-          setDepartments([]);
-        }
-      } finally {
-        if (!cancelled) {
-          setLoadingDepartments(false);
+          setDepartments([])
         }
       }
-    };
+    }
 
-    loadDepartments();
+    loadDepartments()
 
     return () => {
-      cancelled = true;
-    };
-  }, []);
+      cancelled = true
+    }
+  }, [])
 
   // Fetch Positions
   useEffect(() => {
-    let cancelled = false;
+    let cancelled = false
 
     const loadPositions = async () => {
-      setLoadingPositions(true);
       try {
-        const data = await getPositions();
-        
+        const data = await getPositions()
+
         if (!cancelled) {
-          setPositions(data);
+          setPositions(data)
         }
       } catch {
         if (!cancelled) {
-          setPositions([]);
-        }
-      } finally {
-        if (!cancelled) {
-          setLoadingPositions(false);
+          setPositions([])
         }
       }
-    };
+    }
 
-    loadPositions();
+    loadPositions()
 
     return () => {
-      cancelled = true;
-    };
-  }, []);
+      cancelled = true
+    }
+  }, [])
 
   // Fetch Active Employees
   const fetchActiveEmployees = useCallback(() => {
-    setLoadingActive(true);
-    let cancelled = false;
+    setLoadingActive(true)
+    let cancelled = false
 
     const fetchData = async () => {
       try {
@@ -135,36 +125,36 @@ export default function EmployeesPage() {
           department_id: departmentId || undefined,
           position_id: positionId || undefined,
           page,
-        });
+        })
 
         if (!cancelled) {
-          const normalized = Array.isArray(res) ? res : res?.data ?? [];
-          setActiveEmployees(normalized);
-          setActivePagination(res?.pagination ?? null);
+          const normalized = Array.isArray(res) ? res : res?.data ?? []
+          setActiveEmployees(normalized)
+          setActivePagination(res?.pagination ?? null)
         }
       } catch {
         if (!cancelled) {
-          setActiveEmployees([]);
-          setActivePagination(null);
+          setActiveEmployees([])
+          setActivePagination(null)
         }
       } finally {
         if (!cancelled) {
-          setLoadingActive(false);
+          setLoadingActive(false)
         }
       }
-    };
+    }
 
-    fetchData();
+    fetchData()
 
     return () => {
-      cancelled = true;
-    };
-  }, [debouncedSearch, departmentId, positionId, page]);
+      cancelled = true
+    }
+  }, [debouncedSearch, departmentId, positionId, page])
 
   // Fetch Pending Invitations
   const fetchPendingInvitations = useCallback(() => {
-    setLoadingPending(true);
-    let cancelled = false;
+    setLoadingPending(true)
+    let cancelled = false
 
     const fetchData = async () => {
       try {
@@ -173,31 +163,31 @@ export default function EmployeesPage() {
           department_id: departmentId || undefined,
           position_id: positionId || undefined,
           page,
-        });
+        })
 
         if (!cancelled) {
-          const normalized = Array.isArray(res) ? res : res?.data ?? [];
-          setPendingInvitations(normalized);
-          setPendingPagination(res?.pagination ?? null);
+          const normalized = Array.isArray(res) ? res : res?.data ?? []
+          setPendingInvitations(normalized)
+          setPendingPagination(res?.pagination ?? null)
         }
       } catch {
         if (!cancelled) {
-          setPendingInvitations([]);
-          setPendingPagination(null);
+          setPendingInvitations([])
+          setPendingPagination(null)
         }
       } finally {
         if (!cancelled) {
-          setLoadingPending(false);
+          setLoadingPending(false)
         }
       }
-    };
+    }
 
-    fetchData();
+    fetchData()
 
     return () => {
-      cancelled = true;
-    };
-  }, [debouncedSearch, departmentId, positionId, page]);
+      cancelled = true
+    }
+  }, [debouncedSearch, departmentId, positionId, page])
 
   // Fetch data ketika tab aktif berubah atau berada di halaman aktif
   useEffect(() => {
@@ -213,7 +203,7 @@ export default function EmployeesPage() {
     return () => cleanup?.()
   }, [activeTab, fetchPendingInvitations])
 
-  // Reset halaman ke 1 ketika filter berubah 
+  // Reset halaman ke 1 ketika filter berubah
   useEffect(() => {
     setPage(1)
   }, [debouncedSearch, departmentId, positionId, activeTab])
@@ -232,7 +222,7 @@ export default function EmployeesPage() {
     setActiveTab("pending")
   }
 
-  // Buka detail karyawan ketika tombol detail diklik 
+  // Buka detail karyawan ketika tombol detail diklik
   function handleOpenDetail(employee: Employee) {
     setSelectedEmployee(employee)
     setDetailSheetOpen(true)
@@ -258,65 +248,44 @@ export default function EmployeesPage() {
   }
 
   return (
-    <div className="pl-8 pr-8 flex-1">
-      <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div>
-          <h2 className="font-headline tracking-tight text-3xl font-bold text-on-surface">
-            Karyawan
-          </h2>
-          <p className="text-on-surface-variant mt-1">
-            Kelola data karyawan dan undangan yang masih tertunda.
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => setSheetOpen(true)}
-            className="bg-primary text-white px-6 py-2.5 rounded-3xl font-semibold shadow-lg shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition-all active:scale-95"
-          >
-            <UserPlus size={20} />
+    <div className="flex flex-col gap-6">
+      <div>
+        <h2 className="text-[1.75rem] font-medium tracking-[-0.42px] text-foreground">
+          Karyawan
+        </h2>
+        <p className="text-sm text-muted-foreground mt-1">
+          Kelola data karyawan dan undangan yang masih tertunda.
+        </p>
+      </div>
+
+      <Tabs
+        value={activeTab}
+        onValueChange={(val) => setActiveTab(val as Tab)}
+        className="gap-0"
+      >
+        <TabsList>
+          <TabsTrigger value="active">Karyawan Aktif</TabsTrigger>
+          <TabsTrigger value="pending">Undangan Tertunda</TabsTrigger>
+        </TabsList>
+      </Tabs>
+
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-wrap items-center gap-3">
+          <EmployeeFilterBar
+            search={search}
+            onSearchChange={setSearch}
+            departmentId={departmentId}
+            onDepartmentChange={setDepartmentId}
+            positionId={positionId}
+            onPositionChange={setPositionId}
+            departments={departments}
+            positions={positions}
+          />
+          <Button onClick={() => setSheetOpen(true)} className="ml-auto shrink-0">
+            <UserPlus data-icon="inline-start" />
             Tambah Karyawan
-          </button>
+          </Button>
         </div>
-      </div>
-
-      <div className="flex gap-2 mb-6">
-        <button
-          onClick={() => setActiveTab("active")}
-          className={`px-4 py-2 rounded-2xl text-sm font-semibold transition-all ${
-            activeTab === "active"
-              ? "bg-primary text-white shadow-sm"
-              : "bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container-low border border-surface-variant/20"
-          }`}
-        >
-          <Users size={16} className="inline mr-1.5" />
-          Karyawan Aktif
-        </button>
-        <button
-          onClick={() => setActiveTab("pending")}
-          className={`px-4 py-2 rounded-2xl text-sm font-semibold transition-all ${
-            activeTab === "pending"
-              ? "bg-primary text-white shadow-sm"
-              : "bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container-low border border-surface-variant/20"
-          }`}
-        >
-          <Clock size={16} className="inline mr-1.5" />
-          Undangan Tertunda
-        </button>
-      </div>
-
-      <div className="flex flex-col gap-8">
-        <EmployeeFilterBar
-          search={search}
-          onSearchChange={setSearch}
-          departmentId={departmentId}
-          onDepartmentChange={setDepartmentId}
-          positionId={positionId}
-          onPositionChange={setPositionId}
-          departments={departments}
-          positions={positions}
-          loadingDepartments={loadingDepartments}
-          loadingPositions={loadingPositions}
-        />
 
         {activeTab === "active" ? (
           <EmployeeTable
@@ -341,6 +310,8 @@ export default function EmployeesPage() {
         open={sheetOpen}
         onOpenChange={setSheetOpen}
         onSuccess={handleSheetSuccess}
+        departments={departments}
+        positions={positions}
       />
 
       <EmployeeDetailSheet
