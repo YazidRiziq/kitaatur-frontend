@@ -210,7 +210,7 @@ export async function updateEmployeeWorkLocation(
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(input),
+    body: JSON.stringify(input ?? {}),
   })
 
   if (!response.ok) {
@@ -218,31 +218,11 @@ export async function updateEmployeeWorkLocation(
     throw new Error(body?.message || "Gagal memperbarui lokasi kerja karyawan")
   }
 
-  const text = await response.text()
-  if (!text) {
-    return { message: "OK", data: { id, workLocation: input } } as UpdateWorkLocationResponse
-  }
-  return JSON.parse(text) as UpdateWorkLocationResponse
+  return response.json()
 }
 
 export async function resetEmployeeWorkLocation(
   id: string
 ): Promise<UpdateWorkLocationResponse> {
-  const token = await getAccessToken()
-
-  const response = await fetch(apiUrl(`/employees/${id}/work-location`), {
-    method: "DELETE",
-    headers: { Authorization: `Bearer ${token}` },
-  })
-
-  if (!response.ok) {
-    const body = await response.json().catch(() => null)
-    throw new Error(body?.message || "Gagal mereset lokasi kerja karyawan")
-  }
-
-  const text = await response.text()
-  if (!text) {
-    return { message: "OK", data: { id, workLocation: null } }
-  }
-  return JSON.parse(text) as UpdateWorkLocationResponse
+  return updateEmployeeWorkLocation(id, null)
 }
